@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="EditTextSaveMeTheme" parent="android:Widget.EditText">
+	  <item name="android:background">@drawable/savemetheme_edit_text_holo_dark</item>
+	  <item name="android:textColor">#ffffff</item>
+  </style>
+
+  <style name="AutoCompleteTextViewSaveMeTheme" parent="android:Widget.AutoCompleteTextView">
+      <item name="android:dropDownSelector">@drawable/savemetheme_list_selector_holo_dark</item>
+	  <item name="android:background">@drawable/savemetheme_edit_text_holo_dark</item>
+	  <item name="android:textColor">#ffffff</item>
+  </style>
+
+  <style name="CheckBoxSaveMeTheme" parent="android:Widget.CompoundButton.CheckBox">
+      <item name="android:button">@drawable/savemetheme_btn_check_holo_dark</item>
+  </style>
+
+  <style name="RadioButtonSaveMeTheme" parent="android:Widget.CompoundButton.RadioButton">
+      <item name="android:button">@drawable/savemetheme_btn_radio_holo_dark</item>
+  </style>
+
+  <style name="ButtonSaveMeTheme" parent="android:Widget.Button">
+	  <item name="android:background">@drawable/savemetheme_btn_default_holo_dark</item>
+	  <item name="android:minHeight">48dip</item>
+	  <item name="android:minWidth">64dip</item>
+	  <item name="android:textColor">#ffffff</item>
+  </style>
+
+  <style name="ImageButtonSaveMeTheme" parent="android:Widget.ImageButton">
+	  <item name="android:background">@drawable/savemetheme_btn_default_holo_dark</item>
+  </style>
+
+  <style name="SpinnerSaveMeTheme" parent="android:Widget.Spinner">
+      <item name="android:background">@drawable/savemetheme_spinner_background_holo_dark</item>
+      <item name="android:dropDownSelector">@drawable/savemetheme_list_selector_holo_dark</item>
+  </style>
+
+  <style name="SpinnerDropDownItemSaveMeTheme" parent="android:Widget.DropDownItem.Spinner">
+      <item name="android:checkMark">@drawable/savemetheme_btn_radio_holo_dark</item>
+  </style>
+  <style name="TabSaveMeTheme">
+      <item name="android:gravity">center_horizontal</item>
+      <item name="android:paddingLeft">16dip</item>
+      <item name="android:paddingRight">16dip</item>
+      <item name="android:background">@drawable/savemetheme_tab_indicator_holo</item>
+      <item name="android:layout_width">0dip</item>
+      <item name="android:layout_weight">1</item>
+      <item name="android:minWidth">80dip</item>
+  </style>
+
+  <style name="TabTextSaveMeTheme">
+	  <item name="android:textColor">#ffffff</item>
+      <item name="android:textSize">12sp</item>
+      <item name="android:textStyle">bold</item>
+      <!-- v14 <item name="android:textAllCaps">true</item> -->
+      <item name="android:ellipsize">marquee</item>
+      <item name="android:maxLines">2</item>
+      <item name="android:maxWidth">180dip</item>
+  </style>
+
+  <style name="ProgressBarSaveMeTheme" parent="android:Widget.ProgressBar.Horizontal">
+      <item name="android:progressDrawable">@drawable/savemetheme_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/savemetheme_progress_indeterminate_horizontal_holo_dark</item>
+      <item name="android:minHeight">16dip</item>
+      <item name="android:maxHeight">16dip</item>
+  </style>
+
+  <style name="SeekBarSaveMeTheme" parent="android:Widget.SeekBar">
+      <item name="android:progressDrawable">@drawable/savemetheme_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/savemetheme_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:minHeight">13dip</item>
+      <item name="android:maxHeight">13dip</item>
+      <item name="android:thumb">@drawable/savemetheme_scrubber_control_selector_holo_dark</item>
+      <item name="android:thumbOffset">16dip</item>
+      <item name="android:paddingLeft">16dip</item>
+      <item name="android:paddingRight">16dip</item>
+  </style>
+
+  <style name="RatingBarSaveMeTheme" parent="android:Widget.RatingBar">
+      <item name="android:progressDrawable">@drawable/savemetheme_ratingbar_full_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/savemetheme_ratingbar_full_holo_dark</item>
+  </style>
+
+  <style name="RatingBarBigSaveMeTheme" parent="android:Widget.RatingBar">
+      <item name="android:progressDrawable">@drawable/savemetheme_ratingbar_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/savemetheme_ratingbar_holo_dark</item>
+      <item name="android:minHeight">35dip</item>
+      <item name="android:maxHeight">35dip</item>
+  </style>
+
+  <style name="RatingBarSmallSaveMeTheme" parent="android:Widget.RatingBar">
+      <item name="android:progressDrawable">@drawable/savemetheme_ratingbar_small_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/savemetheme_ratingbar_small_holo_dark</item>
+      <item name="android:minHeight">16dip</item>
+      <item name="android:maxHeight">16dip</item>
+  </style>
+
+  <style name="ToggleSaveMeTheme" parent="android:Widget.Button.Toggle">
+      <item name="android:background">@drawable/savemetheme_btn_toggle_holo_dark</item>
+      <item name="android:minHeight">48dip</item>
+	  <item name="android:textColor">#ffffff</item>
+  </style>
+
+  <style name="ListViewSaveMeTheme" parent="android:Widget.ListView">
+      <item name="android:listSelector">@drawable/savemetheme_list_selector_holo_dark</item>
+  </style>
+
+  <style name="ListViewSaveMeTheme.White" parent="android:Widget.ListView.White">
+      <item name="android:listSelector">@drawable/savemetheme_list_selector_holo_dark</item>
+  </style>
+
+  <style name="SpinnerItemSaveMeTheme" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+      <item name="android:textColor">#ffffff</item>
+  </style>
+
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="SaveMeTheme" parent="Theme.AppCompat">
+
+    <item name="android:editTextStyle">@style/EditTextSaveMeTheme</item>
+
+    <item name="android:textColorHighlight">#9907138e</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewSaveMeTheme</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxSaveMeTheme</item>
+
+    <item name="android:radioButtonStyle">@style/RadioButtonSaveMeTheme</item>
+
+    <item name="android:buttonStyle">@style/ButtonSaveMeTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonSaveMeTheme</item>
+
+    <item name="android:spinnerStyle">@style/SpinnerSaveMeTheme</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemSaveMeTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarSaveMeTheme</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarSaveMeTheme</item>
+
+    <item name="android:ratingBarStyle">@style/RatingBarSaveMeTheme</item>
+
+    <item name="android:ratingBarStyleIndicator">@style/RatingBarBigSaveMeTheme</item>
+
+    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallSaveMeTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleSaveMeTheme</item>
+
+    <item name="android:listViewStyle">@style/ListViewSaveMeTheme</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewSaveMeTheme.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemSaveMeTheme</item>
+
+  </style>
+
+</resources>

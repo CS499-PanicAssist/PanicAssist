@@ -1,11 +1,85 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView android:text="@string/greeting" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!-- big button area -->
+    <LinearLayout
+        android:layout_weight="45"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/photoView"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:layout_weight="5"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/main_button"
+                />
+    </LinearLayout>
+
+    <!-- app notification and calling area -->
+    <LinearLayout
+        android:layout_weight="20"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
+
+        <!-- notification area -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_marginRight="20dp"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:scrollbarAlwaysDrawVerticalTrack="true">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:text="Incoming alert!"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:text="Incoming alert!"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:text="Contact Request"/>
+
+
+
+            </LinearLayout>
+
+        <!-- calling button -->
+        <ImageView
+            android:id="@+id/phonebutton"
+            android:layout_width="0dp"
+            android:layout_weight="30"
+            android:layout_height="fill_parent"
+            android:src="@drawable/redphone"/>
+
+    </LinearLayout>
+
+</LinearLayout>
