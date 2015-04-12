@@ -27,8 +27,7 @@
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="@string/main_button"
-                />
+                android:text="@string/main_button"/>
     </LinearLayout>
 
     <!-- app notification and calling area -->
@@ -45,32 +44,55 @@
         >
 
         <!-- notification area -->
-        <LinearLayout
+        <ScrollView
             android:layout_width="0dp"
+            android:layout_height="fill_parent"
             android:layout_weight="50"
             android:layout_marginRight="20dp"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:scrollbarAlwaysDrawVerticalTrack="true">
+            android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:text="Incoming alert!"/>
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:text="Incoming alert!"/>
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Incoming alert!"/>
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:text="Contact Request"/>
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Incoming alert!"/>
 
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Contact Request"/>
 
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Contact Request"/>
 
-            </LinearLayout>
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Contact Request"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Contact Request"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Contact Request"/>
+
+             </LinearLayout>
+        </ScrollView>
 
         <!-- calling button -->
         <ImageView

@@ -1,25 +1,24 @@
 package edu.cpp.preston.saveme;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity {
+
+public class Settings extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_settings);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
     }
 
@@ -32,19 +31,6 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //settings was selected in menu dropdown
-            Intent intent = new Intent(this, Settings.class);
-            startActivity(intent);
-
-            return true;
-        } else if (id == R.id.action_help) {
-
-            Toast.makeText(getApplicationContext(), "Help was clicked", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.action_about) {
-
-
-            Toast.makeText(getApplicationContext(), "About was clicked", Toast.LENGTH_SHORT).show();
             return true;
         }
 
