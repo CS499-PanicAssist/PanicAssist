@@ -23,7 +23,7 @@
             android:layout_weight="5"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:src="@drawable/savemelogo"
+            android:src="@drawable/savemegraylogo"
             android:clickable="true"
             android:longClickable="false"
             android:onClick="alertClick"  />
@@ -45,62 +45,79 @@
         >
 
         <!-- notification area -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="50"
             android:layout_marginRight="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Notifications:"
+                android:textSize="15dp"
+                android:textStyle="bold"/>
+
+            <ScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Incoming alert!"/>
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Incoming alert!"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Incoming alert!"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Contact Request"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Incoming alert!"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Contact Request"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Contact Request"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Contact Request"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Contact Request"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Contact Request"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Contact Request"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="30dp"
-                    android:text="Contact Request"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Contact Request"/>
 
-             </LinearLayout>
-        </ScrollView>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="30dp"
+                        android:text="Welcome!"/>
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
 
         <!-- calling button -->
-        <ImageView
+        <ImageButton
             android:id="@+id/phonebutton"
             android:layout_width="0dp"
             android:layout_weight="30"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            android:scaleType="centerInside"
+            android:layout_gravity="center"
             android:src="@drawable/bluephone"/>
 
     </LinearLayout>
