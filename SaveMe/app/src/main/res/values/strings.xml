@@ -12,20 +12,23 @@
     <string name="send_custom">Customize</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_message_sent">Sent!</string>
-    <string name="title_activity_customize_alert">CustomizeAlert</string>
-    <string name="title_activity_phone_numbers">PhoneNumbersActivity</string>
+    <string name="title_activity_customize_alert">Customize Alert</string>
+    <string name="title_activity_phone_numbers">Emergency Numbers</string>
     <string name="dialog_about_title">About Save Me</string>
     <string name="dialog_about_body">What originally started as a school project, turned into something much more, and is helping people all around the globe have a little bit more piece of mind by what their smart phones can do for them in the case of an instantaneous and extreme emergency.</string>
     <string name="okay">Okay</string>
     <string name="action_headphones">Send alert on audio unplug</string>
     <string name="phonenumbers_label">Saved numbers:</string>
     <string name="phonenumbers_suggested_label">Suggested numbers for your area:</string>
-    <string name="title_activity_help">HelpActivity</string>
+    <string name="title_activity_help">Help</string>
     <string name="notifications">Notifications:</string>
-    <string name="title_activity_notfication">NotficationActivity</string>
+    <string name="title_activity_notfication">Notfication</string>
     <string name="close">Close</string>
     <string name="action_terms">Terms of service</string>
     <string name="action_privacy_policy">Privacy policy</string>
     <string name="title_activity_tutorial">Tutorial</string>
+    <string name="open_dialer">Open in dialer</string>
+    <string name="call">Call</string>
+    <string name="delete">Delete</string>
 
 </resources>

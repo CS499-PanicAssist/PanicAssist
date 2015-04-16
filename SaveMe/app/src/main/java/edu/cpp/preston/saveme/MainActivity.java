@@ -132,29 +132,7 @@ public class MainActivity extends ActionBarActivity {
             Intent intent = new Intent(this, HelpActivity.class);
             startActivity(intent);
             return true;
-        }
-        /*
-        //TODO place about in helps drop down bar
-        else if (id == R.id.action_about) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            builder.setMessage(R.string.dialog_about_body)
-                    .setTitle(R.string.dialog_about_title)
-                    .setIcon(android.R.drawable.ic_menu_info_details)
-                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-
-                        }
-                    });
-
-            AlertDialog dialog = builder.create();
-
-            dialog.show();
-            return true;
-        }
-        */
-        else if (id == R.id.headphones_menu_checkbox){
+        } else if (id == R.id.headphones_menu_checkbox){
             if (item.isChecked()){ //turn off alert on unplug
                 sendAlertOnUnplug(false);
                 item.setChecked(false);

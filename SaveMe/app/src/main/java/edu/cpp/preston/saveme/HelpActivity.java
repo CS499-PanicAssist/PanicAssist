@@ -1,6 +1,8 @@
 package edu.cpp.preston.saveme;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -46,10 +48,32 @@ public class HelpActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_about) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            builder.setMessage(R.string.dialog_about_body)
+                    .setTitle(R.string.dialog_about_title)
+                    .setIcon(android.R.drawable.ic_menu_info_details)
+                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+
+            AlertDialog dialog = builder.create();
+
+            dialog.show();
             return true;
+        } else if (id == R.id.action_terms_of_service){
+            //TODO
+        } else if (id == R.id.action_privacy_policy){
+            //TODO
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public Activity getActivity() {
+        return this;
     }
 }
