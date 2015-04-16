@@ -7,12 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class PhoneNumbersActivity extends ActionBarActivity {
+public class NotificationActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phone_numbers);
+        setContentView(R.layout.activity_notfication);
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -22,7 +22,7 @@ public class PhoneNumbersActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_phone_numbers, menu);
+        getMenuInflater().inflate(R.menu.menu_notfication, menu);
         return true;
     }
 

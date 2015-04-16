@@ -6,7 +6,7 @@ import android.os.Bundle;
         import android.view.View;
         import android.view.ViewGroup;
 
-public class HelpFragment extends Fragment {
+public class TutorialFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

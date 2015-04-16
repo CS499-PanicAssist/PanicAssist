@@ -5,17 +5,14 @@
     tools:context=".MainActivity">
 
     <item android:id="@+id/headphones_menu_checkbox" android:title="@string/action_headphones"
-        android:orderInCategory="0" app:showAsAction="never"
+        android:orderInCategory="0" app:showAsAction="always"
         android:checkable="true"
-        />
+        android:icon="@drawable/jack"/>
 
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="20" app:showAsAction="never"/>
 
     <item android:id="@+id/action_help" android:title="@string/action_help"
-        android:orderInCategory="90" app:showAsAction="never" />
-
-    <item android:id="@+id/action_about" android:title="@string/action_about"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="100" app:showAsAction="never"/>
 
 </menu>
