@@ -27,7 +27,8 @@
         <activity
             android:name=".CustomizeAlert"
             android:label="@string/title_activity_customize_alert"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <activity
             android:name=".PhoneNumbersActivity"

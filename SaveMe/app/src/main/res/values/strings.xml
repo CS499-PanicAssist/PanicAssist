@@ -30,5 +30,10 @@
     <string name="open_dialer">Open in dialer</string>
     <string name="call">Call</string>
     <string name="delete">Delete</string>
+    <string name="help_details">Welcome to the help page, this page will be completed when the app is finished so that it is accurate</string>
+    <string name="message_text">Message Text:</string>
+    <string name="quick_text">Quick Text</string>
+    <string name="To">To...</string>
+    <string name="sendGPSLocation">Send GPS Location</string>
 
 </resources>

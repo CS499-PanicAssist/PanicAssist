@@ -1,15 +1,90 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="edu.cpp.preston.saveme.CustomizeAlert">
+    tools:context="edu.cpp.preston.saveme.CustomizeAlert"
+    android:background="@android:color/black">
 
-    <TextView android:text="Customize Alert Page" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!-- Message and label -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="45"
+        android:orientation="vertical"
+        android:weightSum="1">
 
-</RelativeLayout>
+        <TextView android:text="@string/message_text" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <!-- Message Textbox and quick text button -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:paddingRight="20dp"
+                android:layout_weight="80"
+                android:ems="10"
+                android:id="@+id/messageText"
+                android:background="@drawable/message"
+                android:text="Default Message"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="20"
+                android:layout_height="70dp"
+                android:id="@+id/quickTextButton"
+                android:text="@string/quick_text"
+                android:textSize="11sp"
+                />
+
+            </LinearLayout>
+    </LinearLayout>
+
+    <CheckBox
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sendGPSLocation"
+        android:id="@+id/checkboxSendLocation"
+        android:checked="true"/>
+
+    <!-- To label and listview -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="45"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/To"
+            />
+
+        <ListView
+            android:id="@+id/contactsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ></ListView>
+
+        </LinearLayout>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendButton"
+        android:text="Send"/>
+
+</LinearLayout>
