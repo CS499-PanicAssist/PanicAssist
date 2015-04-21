@@ -61,18 +61,7 @@ public class MainActivity extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-                //intent.putExtra("name", friends.get(i).getName());
-                //TODO put extra notificationId, -not yet made yet though
-                startActivity(intent);
-            }
-        });
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO have popup dialog as to delete
-                return true;
+                showNotificationDialog(notifications.get(i)); //shows dialog for notification clicked
             }
         });
     }
@@ -117,7 +106,6 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        //TODO make so that this works ^
 
         int id = item.getItemId();
 
@@ -190,14 +178,100 @@ public class MainActivity extends ActionBarActivity {
 
         dialog.show();
         timer.start();
-
     }
 
     private boolean alertAbleToSend(){
         //TODO Check if alert is set up and would be able to be send if needed
 
-
         return true;
+    }
+
+    private void showNotificationDialog(final Notification notification){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        if (notification.getType() == 1){ //info message
+
+            builder.setMessage(notification.getMessage())
+                    .setTitle(notification.getTitle())
+                    .setIcon(android.R.drawable.ic_dialog_info);
+
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //TODO Delete message from file memory here
+
+                    notifications.remove(notification);
+                    notificationListAdapter.notifyDataSetChanged();
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+        } else if (notification.getType() == 2){ //alert
+
+            builder.setMessage(notification.getMessage())
+                    .setTitle(notification.getTitle())
+                    .setIcon(android.R.drawable.ic_dialog_alert);
+
+            builder.setPositiveButton(R.string.viewAlert, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Intent intent = new Intent(MainActivity.this, NotificationAlertActivity.class);
+
+                    //TODO put extra notificationId so that the activity knows which alert to show, -not yet made yet though
+                    //intent.putExtra("ID", notifications.get(i).getID());
+
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+        } else if (notification.getType() == 3){ //contact request
+
+            builder.setMessage(notification.getMessage())
+                    .setTitle(notification.getTitle())
+                    .setIcon(android.R.drawable.ic_dialog_email);
+
+            builder.setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //TODO send alert to other user that they can now alert this user
+                    //TODO delete notification from file memory
+
+                    notifications.remove(notification);
+                    notificationListAdapter.notifyDataSetChanged();
+                }
+            });
+
+            builder.setNeutralButton(R.string.ignore, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //TODO delete notification but do not notify sender that they can alert to this user
+
+                    notifications.remove(notification);
+                    notificationListAdapter.notifyDataSetChanged();
+                }
+            });
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+        } else {
+            throw new RuntimeException("Notification type not recognized.");
+        }
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
     private Activity getActivity(){

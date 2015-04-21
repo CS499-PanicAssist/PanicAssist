@@ -35,5 +35,14 @@
     <string name="quick_text">Quick Text</string>
     <string name="To">To...</string>
     <string name="sendGPSLocation">Send GPS Location</string>
+    <string name="viewAlert">View Alert</string>
+    <string name="allow">Allow</string>
+    <string name="ignore">Ignore</string>
+    <string name="message">Message:</string>
+    <string name="GPSLocation">GPS Location:</string>
+    <string name="viewOnMap">View On Map</string>
+    <string name="deleteNotification">Delete Notification</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key">AIzaSyBbKOr_w2f8ikv0_vTkydGXO8H24QNps1Y</string>
 
 </resources>
