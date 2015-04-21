@@ -12,7 +12,7 @@
     android:background="@android:color/black">
 
     <TextView
-        android:text="John send an alert at 10:30PM"
+        android:text="ERROR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/whoWhenText"
@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:background="@color/material_blue_grey_900"
             android:textSize="19sp"
-            android:text="Please help me........ blah blah blah blah blah blah blah blah "/>
+            android:id="@+id/messageText"
+            android:text="ERROR"/>
         </LinearLayout>
 
     <LinearLayout
@@ -55,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/material_blue_grey_900"
-            android:text="Latitude: 40.712312 \nLongitude: -74.0057372"
+            android:text="Latitude: ERROR \nLongitude: ERROR"
             android:textSize="20sp"
             android:id="@+id/GPScoords"/>
     </LinearLayout>

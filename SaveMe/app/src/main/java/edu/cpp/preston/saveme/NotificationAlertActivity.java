@@ -2,6 +2,7 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,39 +10,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.TextView;
 
 public class NotificationAlertActivity extends ActionBarActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notfication_alert);
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        final Intent intent = getIntent();
+
         Button openMapButton = (Button) findViewById(R.id.viewMapButton);
 
         openMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                String geoUri = "http://maps.google.com/maps?q=loc:" + intent.getStringExtra("lat") + "," + intent.getStringExtra("lon") + " (" + intent.getStringExtra("name") + " at " + intent.getStringExtra("time") + ")";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
                 startActivity(intent);
-                //TODO FOX THIS
-
-
-                /*
-                CLLocationCoordinate2D start = { 34.052222, -118.243611 };
-                CLLocationCoordinate2D destination = { 37.322778, -122.031944 };
-
-                NSString *googleMapsURLString = [NSString stringWithFormat:@"http://maps.google.com/?saddr=%1.6f,%1.6f&daddr=%1.6f,%1.6f",
-                        start.latitude, start.longitude, destination.latitude, destination.longitude];
-
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:googleMapsURLString]];
-                */
             }
         });
+
+        Button deleteNotification = (Button) findViewById(R.id.deleteNotificationButton);
+
+        deleteNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO delete notification and go to mainActivity
+                //intent.getStringExtra("ID") //id of notification shown
+            }
+        });
+
+        TextView GPScoordsText = (TextView) findViewById(R.id.GPScoords);
+        GPScoordsText.setText("Latitude: " + intent.getStringExtra("lat") + "\nLongitude: " + intent.getStringExtra("lon"));
+
+        TextView whoWhenText = (TextView) findViewById(R.id.whoWhenText);
+        whoWhenText.setText(intent.getStringExtra("name") + " sent an alert at " + intent.getStringExtra("time") + " on " + intent.getStringExtra("date"));
+
+        TextView messageText = (TextView) findViewById(R.id.messageText);
+        messageText.setText(intent.getStringExtra("message") + "");
     }
 
     @Override

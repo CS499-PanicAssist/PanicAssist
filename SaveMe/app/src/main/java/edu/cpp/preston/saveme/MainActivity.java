@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,12 +48,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         //sets up notification area
-        notifications = new ArrayList<Notification>();
+        notifications = new ArrayList<Notification>(); //TODO populate notifications from file
         notifications.add(new Notification(1,"Welcome", "This is a welcome message to new users"));
-        notifications.add(new Notification(2, "John Doe", "Alert!", "This is an alert!", 0.0, 0.0));
-        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact", 0.0, 0.0));
-        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact", 0.0, 0.0));
-        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact", 0.0, 0.0));
+        notifications.add(new Notification(2, "Preston Lomenzo", "Alert!", "This is an alert!", 40.712312, -74.0057372, "10:30PM", "10/10/15"));
+        notifications.add(new Notification(3, "John Doe", "Contact Request!", "This is a request to add you as an alert contact"));
+        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact"));
+        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact"));
 
         ListView listView = (ListView) findViewById(R.id.notificationListView);
         notificationListAdapter = new NotificationAdapter(this, notifications);
@@ -221,8 +222,13 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(DialogInterface dialog, int id) {
                     Intent intent = new Intent(MainActivity.this, NotificationAlertActivity.class);
 
-                    //TODO put extra notificationId so that the activity knows which alert to show, -not yet made yet though
-                    //intent.putExtra("ID", notifications.get(i).getID());
+                    intent.putExtra("ID", notification.getID());
+                    intent.putExtra("name", notification.getSender());
+                    intent.putExtra("time", notification.getTime());
+                    intent.putExtra("date", notification.getDate());
+                    intent.putExtra("message", notification.getMessage());
+                    intent.putExtra("lat", notification.getLat() + "");
+                    intent.putExtra("lon", notification.getLon() + "");
 
                     startActivity(intent);
                 }
