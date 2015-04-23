@@ -27,7 +27,13 @@ public class QuickTextAdapter extends ArrayAdapter<String> {
         View view = inflater.inflate(R.layout.item_quick_text, parent, false);
 
         TextView messagePreviewText = (TextView) view.findViewById(R.id.quickTextPreviewText);
-        messagePreviewText.setText(messages.get(position).substring(0, 30));
+        String message = messages.get(position);
+
+        if (message.length() > 33){
+            message = message.substring(0, 30) + "...";
+        }
+
+        messagePreviewText.setText(message);
 
         return view;
     }

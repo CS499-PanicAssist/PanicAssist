@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import java.util.ArrayList;
 
@@ -27,14 +28,7 @@ public class PhoneNumbersActivity extends ActionBarActivity {
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_phone_numbers, menu);
-
-        ///////////////////////////////////////////////////
         phoneNumbers = new ArrayList<PhoneNumber>();
         phoneNumbers.add(new PhoneNumber("Emergency Personal 1", "1(626)-330-3983"));
         phoneNumbers.add(new PhoneNumber("Emergency Personal 2", "1(626)-330-3983"));
@@ -112,22 +106,15 @@ public class PhoneNumbersActivity extends ActionBarActivity {
             }
         });
 
-        return true;
-    }
+        Button addNumberButton = (Button) findViewById(R.id.addPhoneNumber);
+        addNumberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EmergencyNumbersActivity.class);
+                startActivity(intent);
+            }
+        });
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private Activity getActivity(){

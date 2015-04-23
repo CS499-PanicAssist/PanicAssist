@@ -40,13 +40,23 @@ public class SettingsActivity extends ActionBarActivity {
             }
         });
 
-    }
+        emergencyNumbersLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EmergencyNumbersActivity.class);
+                startActivity(intent);
+            }
+        });
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_settings, menu);
-        return true;
+        contactsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(getActivity(), EmergencyNumbersActivity.class);
+                //startActivity(intent);
+
+                //TODO
+            }
+        });
     }
 
     private Activity getActivity(){

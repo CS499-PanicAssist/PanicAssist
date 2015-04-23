@@ -57,5 +57,8 @@
     <string name="userNameNote">Note: This is how other users can add you as a contact on their Save Me app. Your User Name is bound to the primary account on this device. You my change your name if it is available.</string>
     <string name="title_activity_quick_messages">Quick Messages</string>
     <string name="quickMessageDialog">Quick Message</string>
+    <string name="title_activity_emergency_numbers">Emergency Numbers</string>
+    <string name="name">Name</string>
+    <string name="phoneNumber">Phone Number</string>
 
 </resources>
