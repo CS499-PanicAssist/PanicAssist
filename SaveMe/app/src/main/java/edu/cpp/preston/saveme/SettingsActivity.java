@@ -1,13 +1,13 @@
 package edu.cpp.preston.saveme;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class SettingsActivity extends ActionBarActivity {
 
@@ -19,13 +19,27 @@ public class SettingsActivity extends ActionBarActivity {
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        LinearLayout phoneImage = (LinearLayout) findViewById(R.id.accountSetting);
-        phoneImage.setOnClickListener(new View.OnClickListener() {
+        LinearLayout accountLayout = (LinearLayout) findViewById(R.id.accountSetting);
+        LinearLayout emergencyNumbersLayout = (LinearLayout) findViewById(R.id.numbersSetting);
+        LinearLayout contactsLayout = (LinearLayout) findViewById(R.id.contactsSetting);
+        LinearLayout quickMessagesLayout = (LinearLayout) findViewById(R.id.quickMessagesSetting);
+
+        accountLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "debug.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), AccountActivity.class);
+                startActivity(intent);
             }
         });
+
+        quickMessagesLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), QuickMessagesActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
