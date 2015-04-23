@@ -44,5 +44,13 @@
     <string name="deleteNotification">Delete Notification</string>
     <string name="title_activity_maps">Map</string>
     <string name="google_maps_key">AIzaSyBbKOr_w2f8ikv0_vTkydGXO8H24QNps1Y</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="account">Account</string>
+    <string name="yourSavedNumbers">Your saved phone numbers for quick access</string>
+    <string name="emergencyNumbers">Emergency Numbers</string>
+    <string name="contacts">Contacts</string>
+    <string name="yourContacts">Your contacts you can notify of your situation</string>
+    <string name="quickMessage">Quick Messages</string>
+    <string name="quickMessages">Pre-typed messages</string>
 
 </resources>

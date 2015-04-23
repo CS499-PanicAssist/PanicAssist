@@ -77,9 +77,7 @@ public class PhoneNumbersActivity extends ActionBarActivity {
                     }
                 });
 
-                final AlertDialog dialog = builder.create();
-
-                dialog.show();
+                builder.create().show();
             }
         });
 
@@ -108,9 +106,8 @@ public class PhoneNumbersActivity extends ActionBarActivity {
                     }
                 });
 
-                final AlertDialog dialog = builder.create();
+                builder.create().show();
 
-                dialog.show();
                 return true;
             }
         });

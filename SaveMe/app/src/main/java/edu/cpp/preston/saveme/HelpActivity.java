@@ -21,12 +21,10 @@ public class HelpActivity extends ActionBarActivity {
 
         Button b = (Button) findViewById(R.id.tutorial);
 
-        final Activity hi = this;
-
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(hi, TutorialActivity.class);
+                Intent intent = new Intent(getActivity(), TutorialActivity.class);
                 startActivity(intent);
             }
         });
@@ -60,9 +58,8 @@ public class HelpActivity extends ActionBarActivity {
                         }
                     });
 
-            AlertDialog dialog = builder.create();
+            builder.create().show();
 
-            dialog.show();
             return true;
         } else if (id == R.id.action_terms_of_service){
             //TODO

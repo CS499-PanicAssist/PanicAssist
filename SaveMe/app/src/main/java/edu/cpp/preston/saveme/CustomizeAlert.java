@@ -68,8 +68,7 @@ public class CustomizeAlert extends ActionBarActivity {
                             }
                         });
 
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                builder.create().show();
             }
         });
 
