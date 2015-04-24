@@ -2,7 +2,9 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 
 public class CustomizeAlert extends ActionBarActivity {
 
+    private ArrayList<String> quickTexts;
     private ArrayList<Contact> contacts;
     private ContactAdapter contactListAdapter;
 
@@ -38,25 +41,29 @@ public class CustomizeAlert extends ActionBarActivity {
             }
         });
 
-        Button quickTextButton = (Button) findViewById(R.id.quickTextButton);
+        final SharedPreferences sharedPrefPhoneNumbers = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+
+        quickTexts = new ArrayList<String>();
+        for (int i = 0; i < 50; i++){ //gets preferences
+            if (sharedPrefPhoneNumbers.contains("quicktext" + i)){
+                quickTexts.add(sharedPrefPhoneNumbers.getString("quicktext" + i,"ERROR"));
+            }
+        }
+
+        final Button quickTextButton = (Button) findViewById(R.id.quickTextButton);
         quickTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                final String[] fullMessages = new String[3]; //TODO get user saved messaged and set to messages[]
-                fullMessages[0] = "Help I'm in trouble";
-                fullMessages[1] = "Please call me, if I don't pick up please come to my location";
-                fullMessages[2] = "This is just a test message";
-
-                String[] shortMessages = new String[3];
+                String[] shortMessages = new String[quickTexts.size()];
                 final int MAX_SHOWN_CHAR_LENGTH = 30;
 
-                for(int i = 0; i <fullMessages.length; i++){
-                    if (fullMessages[i].length() > MAX_SHOWN_CHAR_LENGTH){
-                        shortMessages[i] = fullMessages[i].substring(0, MAX_SHOWN_CHAR_LENGTH) + "...";
+                for(int i = 0; i < quickTexts.size(); i++){
+                    if (quickTexts.get(i).length() > MAX_SHOWN_CHAR_LENGTH){
+                        shortMessages[i] = quickTexts.get(i).substring(0, MAX_SHOWN_CHAR_LENGTH) + "...";
                     } else{
-                        shortMessages[i] = fullMessages[i];
+                        shortMessages[i] = quickTexts.get(i);
                     }
                 }
 
@@ -64,7 +71,7 @@ public class CustomizeAlert extends ActionBarActivity {
                         .setItems(shortMessages, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 TextView messageText = (TextView) findViewById(R.id.messageText);
-                                messageText.setText(fullMessages[which]); //sets message text to quick text user has selected
+                                messageText.setText(quickTexts.get(which)); //sets message text to quick text user has selected
                             }
                         });
 

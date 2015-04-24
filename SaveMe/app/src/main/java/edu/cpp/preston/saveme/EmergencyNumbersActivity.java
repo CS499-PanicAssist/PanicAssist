@@ -97,20 +97,14 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
                     return;
                 }
 
-                //TODO Check if phone number is a duplicate here?
-                //TODO add to file system here
-
                 for (int i = 0; i < 50; i++){ //add number to prefecences
                     if (!sharedPrefPhoneNumbers.contains("name" + i)){
-                        //phoneNumbers.add(new PhoneNumber(nameText.getText().toString(), numberText.getText().toString()));
-
                         SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
                         editor.putString("name" + i, nameText.getText().toString());
                         editor.putString("number" + i, numberText.getText().toString());
                         editor.commit();
 
                         break;
-                        //TODO may need to relow list view here?
                     }
                 }
 

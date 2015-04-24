@@ -2,7 +2,9 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,13 +26,14 @@ public class QuickMessagesActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_messages);
 
+        final SharedPreferences sharedPrefPhoneNumbers = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
 
-        //sets up notification area
-        quickTexts = new ArrayList<String>(); //TODO populate quicktexts from file
-        quickTexts.add("Help I'm in trouble");
-        quickTexts.add("Please call me. If I don't pick up I may need help");
-        quickTexts.add("This is just letting you know my location, thanks");
-
+        quickTexts = new ArrayList<String>();
+        for (int i = 0; i < 50; i++){ //gets preferences
+            if (sharedPrefPhoneNumbers.contains("quicktext" + i)){
+                quickTexts.add(sharedPrefPhoneNumbers.getString("quicktext" + i,"ERROR"));
+            }
+        }
 
         ListView listView = (ListView) findViewById(R.id.quickTextListView);
         quickTextListAdapter = new QuickTextAdapter(this, quickTexts);
@@ -51,7 +54,17 @@ public class QuickMessagesActivity extends ActionBarActivity {
                 if (messageEditText.getText().length() > 0){
                     quickTexts.add(messageEditText.getText().toString());
                     quickTextListAdapter.notifyDataSetChanged();
-                    //TODO add to file system here
+
+                    for (int i = 0; i < 50; i++){ //add text to prefecences
+                        if (!sharedPrefPhoneNumbers.contains("quicktext" + i)){
+                            SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
+                            editor.putString("quicktext" + i, messageEditText.getText().toString());
+                            editor.commit();
+
+                            break;
+                        }
+                    }
+
                     messageEditText.setText("");
                 }
             }
@@ -68,9 +81,20 @@ public class QuickMessagesActivity extends ActionBarActivity {
         builder.setNeutralButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                final SharedPreferences sharedPrefPhoneNumbers = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+
+                for (int j = 0; j < 50; j++){ //removes text from preferences
+                    if (sharedPrefPhoneNumbers.getString("quicktext" + j, "*").equalsIgnoreCase(quickTexts.get(i))){
+                        SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
+                        editor.remove("quicktext" + j);
+                        editor.commit();
+                        break;
+                    }
+                }
+
                 quickTexts.remove(i);
                 quickTextListAdapter.notifyDataSetChanged();
-                //TODO delete from file system here as well
             }
         });
 
