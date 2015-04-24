@@ -15,11 +15,13 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 
     private Context context;
     private ArrayList<Contact> contacts;
+    private boolean showCheckBox;
 
-    public ContactAdapter(Context context, ArrayList<Contact> contacts) {
+    public ContactAdapter(Context context, ArrayList<Contact> contacts, boolean showCheckBox) {
         super(context, R.layout.item_contact, contacts);
         this.context = context;
         this.contacts = contacts;
+        this.showCheckBox = showCheckBox;
     }
 
     @Override
@@ -30,14 +32,27 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         ImageView imageView = (ImageView) view.findViewById(R.id.contactTypeIcon);
         TextView nameText = (TextView) view.findViewById(R.id.nameText);
         TextView contactIDText = (TextView) view.findViewById(R.id.contactIDText);
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
 
         nameText.setText(contacts.get(position).getdisplayName());
         contactIDText.setText(contacts.get(position).getID());
 
+        if (!showCheckBox){
+            checkBox.setVisibility(View.GONE);
+        }
+
         if (contacts.get(position).isNumber){ //contact is a phone number
             imageView.setImageResource(R.drawable.contactphone);
         } else { //contact is a Save Me user name
-            imageView.setImageResource(R.drawable.contactuser);
+            if (!showCheckBox){ //means your in contacts activity
+                if (contacts.get(position).isConfirmed){
+                    imageView.setImageResource(R.drawable.contactuserconfirmed);
+                } else{
+                    imageView.setImageResource(R.drawable.contactusernotconfirmed);
+                }
+            } else { //means your in customize alert activity
+                imageView.setImageResource(R.drawable.contactuser);
+            }
         }
 
         return view;

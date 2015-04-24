@@ -81,7 +81,7 @@ public class CustomizeAlert extends ActionBarActivity {
         contacts.add(new Contact("Dude Doe", "6262175613", true));
 
         final ListView listView = (ListView) findViewById(R.id.contactsListView);
-        contactListAdapter = new ContactAdapter(this, contacts);
+        contactListAdapter = new ContactAdapter(this, contacts, true);
         listView.setAdapter(contactListAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

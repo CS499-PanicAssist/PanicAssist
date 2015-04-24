@@ -2,14 +2,14 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,10 +29,14 @@ public class PhoneNumbersActivity extends ActionBarActivity {
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        final SharedPreferences sharedPrefPhoneNumbers = this.getSharedPreferences(getString(R.string.preference_file_phone_numbers_key), Context.MODE_PRIVATE);
+
         phoneNumbers = new ArrayList<PhoneNumber>();
-        phoneNumbers.add(new PhoneNumber("Emergency Personal 1", "1(626)-330-3983"));
-        phoneNumbers.add(new PhoneNumber("Emergency Personal 2", "1(626)-330-3983"));
-        phoneNumbers.add(new PhoneNumber("Emergency Personal 3", "1(626)-330-3983"));
+        for (int i = 0; i < 50; i++){ //gets preferences
+            if (sharedPrefPhoneNumbers.contains("name" + i)){
+                phoneNumbers.add(new PhoneNumber(sharedPrefPhoneNumbers.getString("name" + i,"ERROR"), sharedPrefPhoneNumbers.getString("number" + i,"ERROR")));
+            }
+        }
 
         ListView listView = (ListView) findViewById(R.id.phoneNumberListView);
         phoneNumberListAdapter = new PhoneNumberAdapter(this, phoneNumbers);
@@ -67,7 +71,6 @@ public class PhoneNumbersActivity extends ActionBarActivity {
                 //Cancel phone number click
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                     }
                 });
 
@@ -86,10 +89,19 @@ public class PhoneNumbersActivity extends ActionBarActivity {
                 //Delete
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        deleteNumber();
-                        //phoneNumbers.remove(i);
-                        //TODO notify list view of data set change after number is removed
-                        //listView.notifyDataSetChanged();
+
+                        for (int j = 0; j < 50; j++){ //removes number from preferences
+                            if (sharedPrefPhoneNumbers.getString("name" + j, "*").equalsIgnoreCase(phoneNumbers.get(i).getName())){
+                                SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
+                                editor.remove("name" + j);
+                                editor.remove("number" + j);
+                                editor.commit();
+                                break;
+                            }
+                        }
+
+                        phoneNumbers.remove(i);
+                        phoneNumberListAdapter.notifyDataSetChanged();
                     }
                 });
 
@@ -121,7 +133,11 @@ public class PhoneNumbersActivity extends ActionBarActivity {
         return this;
     }
 
-    private void deleteNumber(){
-        //TODO should delete number from saved file system
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 }

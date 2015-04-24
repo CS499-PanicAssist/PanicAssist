@@ -51,10 +51,8 @@ public class SettingsActivity extends ActionBarActivity {
         contactsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getActivity(), EmergencyNumbersActivity.class);
-                //startActivity(intent);
-
-                //TODO
+                Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                startActivity(intent);
             }
         });
     }

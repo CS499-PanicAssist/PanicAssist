@@ -54,11 +54,17 @@
     <string name="quickMessages">Pre-typed messages</string>
     <string name="title_activity_account">Account</string>
     <string name="userName">User Name:</string>
-    <string name="userNameNote">Note: This is how other users can add you as a contact on their Save Me app. Your User Name is bound to the primary account on this device. You my change your name if it is available.</string>
+    <string name="userNameNote">Note: This is how other users can add you as a contact on their Save Me app. Your User Name is bound to the
+        primary account on this device. You my change your name if it is available.  Additionally, if another user adds you as a contact, that does NOT add them as
+        a contact for you, you must do so separately.</string>
     <string name="title_activity_quick_messages">Quick Messages</string>
     <string name="quickMessageDialog">Quick Message</string>
     <string name="title_activity_emergency_numbers">Emergency Numbers</string>
     <string name="name">Name</string>
     <string name="phoneNumber">Phone Number</string>
+    <string name="title_activity_contacts">Contacts</string>
+    <string name="userName2">User Name</string>
+    <string name="yourUserName">Your user name</string>
+    <string name="preference_file_phone_numbers_key">edu.cpp.SaveMe.PREFERENCE_FILE_PHONE_NUMBERS_KEY</string>
 
 </resources>

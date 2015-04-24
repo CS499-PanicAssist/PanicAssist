@@ -91,6 +91,12 @@
             android:name=".EmergencyNumbersActivity"
             android:label="@string/title_activity_emergency_numbers"
             android:parentActivityName=".SettingsActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".ContactsActivity"
+            android:label="@string/title_activity_contacts"
+            android:parentActivityName=".SettingsActivity"
             android:screenOrientation="portrait">
         </activity>
     </application>
