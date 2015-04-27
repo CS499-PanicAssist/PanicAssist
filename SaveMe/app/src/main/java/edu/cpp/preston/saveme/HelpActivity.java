@@ -21,6 +21,8 @@ public class HelpActivity extends ActionBarActivity {
 
         Button b = (Button) findViewById(R.id.tutorial);
 
+        MainActivity.sendDefaultAlert(getApplicationContext());
+
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

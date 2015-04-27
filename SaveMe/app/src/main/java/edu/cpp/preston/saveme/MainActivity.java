@@ -2,6 +2,7 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.CountDownTimer;
@@ -145,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
 
         builder.setPositiveButton(R.string.send_default, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                sendDefaultAlert();
+                sendDefaultAlert(getApplicationContext());
             }
         });
 
@@ -171,7 +172,7 @@ public class MainActivity extends ActionBarActivity {
             public void onFinish() {
                 if (dialog.isShowing()){ // Dialog box is still open after allotted time, therefor send alert
                     dialog.cancel();
-                    sendDefaultAlert();
+                    sendDefaultAlert(getApplicationContext());
                 }
             }
         };
@@ -293,10 +294,10 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
-    public boolean sendDefaultAlert(){
+    public static boolean sendDefaultAlert(Context context){
         //TODO implement
 
-        Toast.makeText(getApplicationContext(), "Not implemented yet, but will be!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Not implemented yet, but will be!", Toast.LENGTH_SHORT).show();
         return false;
     }
 }
