@@ -2,7 +2,9 @@ package edu.cpp.preston.saveme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ public class ContactsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
@@ -31,14 +34,21 @@ public class ContactsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         contacts = new ArrayList<Contact>();
-        contacts.add(new Contact("John Doe", "6262175613", true)); //TODO populate from file
-        contacts.add(new Contact("James Doe", "coolguy1", false));
-        contacts.add(new Contact("James Doe", "coolguy2", false));
-        Contact hi = new Contact("James Doe", "coolguy3", false);
-        hi.setIsConfirmed(true);
-        contacts.add(hi);
-        contacts.add(new Contact("James Doe", "coolguy4", false));
-        contacts.add(new Contact("Dude Doe", "6262175613", true));
+        for (int i = 0; i < 50; i++){ //gets preferences
+            if (sharedPrefContacts.contains("displayname" + i)){
+                boolean isNumber = false, isConfirmed = false;
+
+                if (sharedPrefContacts.getString("isNumber" + i,"ERROR").equalsIgnoreCase("true")){
+                    isNumber = true;
+                }
+
+                if (sharedPrefContacts.getString("isConfirmed" + i,"ERROR").equalsIgnoreCase("true")){
+                    isConfirmed = true;
+                }
+
+                contacts.add(new Contact(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"),isNumber, isConfirmed));
+            }
+        }
 
         final ListView listView = (ListView) findViewById(R.id.EmergencyPhoneNumbersListView);
         contactListAdapter = new ContactAdapter(this, contacts, false);
@@ -59,7 +69,21 @@ public class ContactsActivity extends ActionBarActivity {
                 //delete number
                 builder.setNeutralButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO remove contact from file
+
+                        for (int j = 0; j < 50; j++){ //removes contact from preferences
+                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(contacts.get(i).getID())){
+                                SharedPreferences.Editor editor = sharedPrefContacts.edit();
+                                editor.remove("displayname" + j);
+                                editor.remove("usernameOrNumber" + j);
+                                editor.remove("isNumber" + j);
+                                editor.remove("isConfirmed" + j);
+                                editor.commit();
+                                break;
+                            }
+                        }
+
+                        //TODO if contact is not confirmed delete notification on server here?
+
                         contacts.remove(i);
                         contactListAdapter.notifyDataSetChanged();
                     }
@@ -103,13 +127,29 @@ public class ContactsActivity extends ActionBarActivity {
                     return;
                 }
 
-                //TODO Check if contact is a duplicate here?
-                //TODO add to file system here
+                Contact newContact = new Contact(nameText.getText().toString(), numberOrUserText.getText().toString(), phoneNumberRadio.isChecked(), false);
 
-                contacts.add(new Contact(nameText.getText().toString(), numberOrUserText.getText().toString(), phoneNumberRadio.isChecked()));
+                for (int i = 0; i < 50; i++){ //add contact to prefecences
+                    if (!sharedPrefContacts.contains("displayname" + i)){
+                        SharedPreferences.Editor editor = sharedPrefContacts.edit();
+                        editor.putString("displayname" + i, newContact.getdisplayName());
+                        editor.putString("usernameOrNumber" + i, newContact.getID());
 
+                        if (newContact.isNumber()){
+                            editor.putString("isNumber" + i, "true");
+                        } else{
+                            editor.putString("isNumber" + i, "false");
+                        }
+
+                        editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
+
+                        editor.commit();
+                        break;
+                    }
+                }
+
+                contacts.add(newContact);
                 contactListAdapter.notifyDataSetChanged();
-
                 nameText.setText("");
                 numberOrUserText.setText("");
             }

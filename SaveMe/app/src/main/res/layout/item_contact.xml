@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:id="@+id/contactCheckBox"
+        android:clickable="false"
         android:checked="true"
         android:focusable="false"
         android:focusableInTouchMode="false"/>

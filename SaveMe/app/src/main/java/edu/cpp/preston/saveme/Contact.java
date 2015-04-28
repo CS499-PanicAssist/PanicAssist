@@ -4,10 +4,10 @@ public class Contact {
     String name, ID;
     boolean isNumber, isConfirmed;
 
-    public Contact(String displayName, String usernameOrNumber, boolean isNumber){
+    public Contact(String displayName, String usernameOrNumber, boolean isNumber, boolean isConfirmed){
         this.name = displayName;
         this.isNumber = isNumber;
-        this.isConfirmed = false;
+        this.isConfirmed = isConfirmed;
 
         if (isNumber){
             ID = usernameOrNumber.replaceAll("[^0-9]","");

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -47,8 +48,9 @@ public class MainActivity extends ActionBarActivity {
             alertImage.setImageResource(R.drawable.savemelogo);
         }
 
+
         //sets up notification area
-        notifications = new ArrayList<Notification>(); //TODO populate notifications from file
+        notifications = new ArrayList<Notification>(); //TODO populate notifications from file and server
         notifications.add(new Notification(1,"Welcome", "This is a welcome message to new users"));
         notifications.add(new Notification(2, "Preston Lomenzo", "Alert!", "This is an alert!", 40.712312, -74.0057372, "10:30PM", "10/10/15"));
         notifications.add(new Notification(3, "John Doe", "Contact Request!", "This is a request to add you as an alert contact"));

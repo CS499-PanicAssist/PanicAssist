@@ -48,6 +48,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
                 if (contacts.get(position).isConfirmed){
                     imageView.setImageResource(R.drawable.contactuserconfirmed);
                 } else{
+                    contactIDText.setText(contacts.get(position).getID() + " - Requires confirmation before use.");
                     imageView.setImageResource(R.drawable.contactusernotconfirmed);
                 }
             } else { //means your in customize alert activity

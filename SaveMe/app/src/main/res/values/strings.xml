@@ -33,7 +33,7 @@
     <string name="help_details">Welcome to the help page, this page will be completed when the app is finished so that it is accurate</string>
     <string name="message_text">Message Text:</string>
     <string name="quick_text">Quick Text</string>
-    <string name="To">To...</string>
+    <string name="To">To…</string>
     <string name="sendGPSLocation">Send GPS Location</string>
     <string name="viewAlert">View Alert</string>
     <string name="allow">Allow</string>
@@ -67,5 +67,7 @@
     <string name="yourUserName">Your user name</string>
     <string name="preference_file_phone_numbers_key">edu.cpp.SaveMe.PREFERENCE_FILE_PHONE_NUMBERS_KEY</string>
     <string name="preference_file_quick_text_key">edu.cpp.SaveMe.PREFERENCE_FILE_QUICK_TEXT_KEY</string>
+    <string name="preference_file_contacts_key">edu.cpp.SaveMe.PREFERENCE_FILE_CONTACTS_KEY</string>
+    <string name="preference_file_notifications_key">edu.cpp.SaveMe.PREFERENCE_FILE_NOTIFICATIONS_KEY</string>
 
 </resources>

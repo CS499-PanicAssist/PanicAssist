@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class CustomizeAlert extends ActionBarActivity {
         });
 
         final SharedPreferences sharedPrefPhoneNumbers = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
 
         quickTexts = new ArrayList<String>();
         for (int i = 0; i < 50; i++){ //gets preferences
@@ -80,12 +82,23 @@ public class CustomizeAlert extends ActionBarActivity {
         });
 
         contacts = new ArrayList<Contact>();
-        contacts.add(new Contact("John Doe", "6262175613", true));
-        contacts.add(new Contact("James Doe", "coolguy1", false));
-        contacts.add(new Contact("James Doe", "coolguy2", false));
-        contacts.add(new Contact("James Doe", "coolguy3", false));
-        contacts.add(new Contact("James Doe", "coolguy4", false));
-        contacts.add(new Contact("Dude Doe", "6262175613", true));
+        for (int i = 0; i < 50; i++){ //gets preferences
+            if (sharedPrefContacts.contains("displayname" + i)){
+                boolean isNumber = false, isConfirmed = false;
+
+                if (sharedPrefContacts.getString("isNumber" + i,"ERROR").equalsIgnoreCase("true")){
+                    isNumber = true;
+                }
+
+                if (sharedPrefContacts.getString("isConfirmed" + i,"ERROR").equalsIgnoreCase("true")){
+                    isConfirmed = true;
+                }
+
+                if (isNumber || isConfirmed){ //must be confirmed to show on send alert to list
+                    contacts.add(new Contact(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"),isNumber, isConfirmed));
+                }
+            }
+        }
 
         final ListView listView = (ListView) findViewById(R.id.contactsListView);
         contactListAdapter = new ContactAdapter(this, contacts, true);
@@ -94,22 +107,13 @@ public class CustomizeAlert extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO check checkbox on listview item click
-                /*
-                Toast.makeText(view.getContext(), "view clicked", Toast.LENGTH_SHORT).show();
-
-
-                CheckBox checkBox = (CheckBox) listView.findViewById(i).findViewById(R.id.checkbox);
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
 
                 if (checkBox.isChecked()){
                     checkBox.setChecked(false);
                 } else{
-                    checkBox.setChecked(false);
+                    checkBox.setChecked(true);
                 }
-
-                checkBox.notify(); //needed?
-
-*/
             }
         });
     }
