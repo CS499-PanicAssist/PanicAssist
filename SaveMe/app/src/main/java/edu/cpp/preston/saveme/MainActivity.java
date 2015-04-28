@@ -24,14 +24,18 @@ import java.util.ArrayList;
 public class MainActivity extends ActionBarActivity {
 
     private boolean doubleBackToExitPressedOnce = false;
-    private ArrayList<Notification> notifications;
-    private NotificationAdapter notificationListAdapter;
+    private static ArrayList<Notification> notifications;
+    private static NotificationAdapter notificationListAdapter;
+    static SharedPreferences sharedPrefNotifications;
+    static SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
+        editor = sharedPrefNotifications.edit();
         ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
 
         //sets phone image button click listener
@@ -48,14 +52,37 @@ public class MainActivity extends ActionBarActivity {
             alertImage.setImageResource(R.drawable.savemelogo);
         }
 
+        //TODO in background get notifications and then refresh adapater once added to notifications array
+        //TODO cont... notification key, the value should be either "info" "request" or "alert" and the other data stored is differnt on each type
 
-        //sets up notification area
-        notifications = new ArrayList<Notification>(); //TODO populate notifications from file and server
-        notifications.add(new Notification(1,"Welcome", "This is a welcome message to new users"));
-        notifications.add(new Notification(2, "Preston Lomenzo", "Alert!", "This is an alert!", 40.712312, -74.0057372, "10:30PM", "10/10/15"));
-        notifications.add(new Notification(3, "John Doe", "Contact Request!", "This is a request to add you as an alert contact"));
-        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact"));
-        notifications.add(new Notification(3, "James Doe", "Contact Request!", "This is a request to add you as an alert contact"));
+        reloadNotificationListView();
+    }
+
+    private void reloadNotificationListView() {
+        notifications = new ArrayList<Notification>();
+
+        if (!sharedPrefNotifications.contains("welcome")){ //if first launch then add welcome notification
+            editor.putString("welcome", getResources().getString(R.string.welcomeMessage));
+            editor.commit();
+        }
+
+        if (!sharedPrefNotifications.getString("welcome", "*").equals("*")){
+            notifications.add(new NotificationInfo(getResources().getString(R.string.welcome), getResources().getString(R.string.welcomeMessage)));
+        }
+
+        for (int i = 0; i < 50; i++){ //gets notifications from preferences file
+            if (sharedPrefNotifications.contains("notification" + i)){
+                if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("info")){
+                    notifications.add(new NotificationInfo(sharedPrefNotifications.getString("title" + i, "ERROR"), sharedPrefNotifications.getString("message" + i, "ERROR") ));
+                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("request")){
+                    notifications.add(new NotificationRequest(sharedPrefNotifications.getString("sender" + i, "ERROR") ));
+                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("alert")){
+                    notifications.add(new NotificationAlert(sharedPrefNotifications.getString("sender" + i, "ERROR"), sharedPrefNotifications.getString("personalMessage" + i, "ERROR"),
+                            Double.parseDouble(sharedPrefNotifications.getString("latitude" + i, "ERROR")), Double.parseDouble(sharedPrefNotifications.getString("longitude" + i, "ERROR")),
+                            sharedPrefNotifications.getString("time" + i, "ERROR"), sharedPrefNotifications.getString("date" + i, "ERROR")));
+                }
+            }
+        }
 
         ListView listView = (ListView) findViewById(R.id.notificationListView);
         notificationListAdapter = new NotificationAdapter(this, notifications);
@@ -106,23 +133,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            //settings was selected in menu dropdown
+        if (id == R.id.action_settings) { //settings was selected in menu dropdown
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
-            return true;
-        } else if (id == R.id.action_help) {
-            //help was selected in menu dropdown
+        } else if (id == R.id.action_help) { //help was selected in menu dropdown
             Intent intent = new Intent(this, HelpActivity.class);
             startActivity(intent);
-            return true;
         } else if (id == R.id.headphones_menu_checkbox){
             if (item.isChecked()){ //turn off alert on unplug
                 sendAlertOnUnplug(false);
@@ -135,7 +153,6 @@ public class MainActivity extends ActionBarActivity {
                 item.setIcon(R.drawable.jackon);
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
             }
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -193,7 +210,7 @@ public class MainActivity extends ActionBarActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        if (notification.getType() == 1){ //info message
+        if (notification.getClass() == NotificationInfo.class){ //info message
 
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
@@ -201,10 +218,27 @@ public class MainActivity extends ActionBarActivity {
 
             builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    //TODO Delete message from file memory here
 
+                    if (notification.getTitle().equals(getResources().getString(R.string.welcome))) { //is welcome info
+                        editor.putString("welcome", "*"); //make a "*" so that we know ist been viewed and deleted
+                    } else { //is trying to delete info that is not welcome info
+
+                        for (int j = 0; j < 50; j++) { //removes text from preferences
+                            //note: notification id isnt necessary  since all alerts should be differnt somehow
+                            if (sharedPrefNotifications.contains("notification" + j) && sharedPrefNotifications.getString("title" + j, "*").equalsIgnoreCase(notification.getTitle())) {
+                                editor.remove("notification" + j);
+                                editor.remove("title" + j);
+                                editor.remove("message" + j);
+                                editor.commit();
+                                break;
+                            }
+                        }
+                    }
+
+                    editor.commit();
                     notifications.remove(notification);
                     notificationListAdapter.notifyDataSetChanged();
+
                 }
             });
 
@@ -214,8 +248,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
-        } else if (notification.getType() == 2){ //alert
-
+        } else if (notification.getClass() == NotificationAlert.class){ //alert
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
                     .setIcon(android.R.drawable.ic_dialog_alert);
@@ -223,14 +256,12 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton(R.string.viewAlert, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Intent intent = new Intent(MainActivity.this, NotificationAlertActivity.class);
+                    NotificationAlert notification2 = (NotificationAlert) notification;
 
-                    intent.putExtra("ID", notification.getID());
-                    intent.putExtra("name", notification.getSender());
-                    intent.putExtra("time", notification.getTime());
-                    intent.putExtra("date", notification.getDate());
-                    intent.putExtra("message", notification.getMessage());
-                    intent.putExtra("lat", notification.getLat() + "");
-                    intent.putExtra("lon", notification.getLon() + "");
+                    intent.putExtra("message", notification2.getMessage());
+                    intent.putExtra("personalMessage", notification2.getPersonalMessage());
+                    intent.putExtra("lat", notification2.getLat() + "");
+                    intent.putExtra("lon", notification2.getLon() + "");
 
                     startActivity(intent);
                 }
@@ -242,7 +273,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
-        } else if (notification.getType() == 3){ //contact request
+        } else if (notification.getClass() == NotificationRequest.class){ //contact request
 
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
@@ -251,19 +282,14 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     //TODO send alert to other user that they can now alert this user
-                    //TODO delete notification from file memory
 
-                    notifications.remove(notification);
-                    notificationListAdapter.notifyDataSetChanged();
+                    deleteNotificationRequest(notification); //deletes notification from memory
                 }
             });
 
             builder.setNeutralButton(R.string.ignore, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    //TODO delete notification but do not notify sender that they can alert to this user
-
-                    notifications.remove(notification);
-                    notificationListAdapter.notifyDataSetChanged();
+                    deleteNotificationRequest(notification); //deletes notification from memory
                 }
             });
 
@@ -278,6 +304,20 @@ public class MainActivity extends ActionBarActivity {
         }
 
         builder.create().show();
+    }
+
+    private void deleteNotificationRequest(Notification notification){
+        for (int j = 0; j < 50; j++) { //removes request from preferences
+            if (sharedPrefNotifications.getString("notification" + j, "*").equalsIgnoreCase("request") && sharedPrefNotifications.getString("sender" + j, "*").equalsIgnoreCase(notification.getSender())) {
+                editor.remove("notification" + j);
+                editor.remove("sender" + j);
+                editor.commit();
+                break;
+            }
+        }
+
+        notifications.remove(notification);
+        notificationListAdapter.notifyDataSetChanged();
     }
 
     private Activity getActivity(){
@@ -298,6 +338,28 @@ public class MainActivity extends ActionBarActivity {
 
     public static boolean sendDefaultAlert(Context context){
         //TODO implement
+
+        //Todo delete between these lines
+
+        Notification hi = new NotificationAlert("hotrod2", "Looks like i might need sum help!", 40.712312, -74.0057372, "10:30PM", "10/10/15");
+        notifications.add(hi);
+        notifications.add(new NotificationRequest("coolguy5"));
+        notificationListAdapter.notifyDataSetChanged();
+        editor.putString("notification1", "request");
+        editor.putString("sender1", "coolguy5");
+
+        editor.putString("notification0", "alert");
+        editor.putString("sender0", "hotrod2");
+        editor.putString("message0", hi.getMessage());
+        editor.putString("personalMessage0", "Looks like i might need sum help!");
+        editor.putString("latitude0", "40.712312");
+        editor.putString("longitude0", "-74.0057372");
+        editor.putString("time0", "10:30PM");
+        editor.putString("date0", "10/10/15");
+
+        editor.commit();
+
+        /////till here
 
         Toast.makeText(context, "Not implemented yet, but will be!", Toast.LENGTH_SHORT).show();
         return false;

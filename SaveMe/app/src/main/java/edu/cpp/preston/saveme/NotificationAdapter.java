@@ -30,21 +30,18 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         TextView titleText = (TextView) view.findViewById(R.id.notificationNameText);
         TextView detailText = (TextView) view.findViewById(R.id.notificationDetailText);
 
-        int type = notifications.get(position).getType();
-        if (type == 1){ //info message
+        if (notifications.get(position).getClass() == NotificationInfo.class){ //info message
             imageView.setImageResource(android.R.drawable.ic_dialog_info);
-            detailText.setText("Click to view");
-        } else if (type == 2){ //alert
+        } else if (notifications.get(position).getClass() == NotificationAlert.class){ //alert
             imageView.setImageResource(android.R.drawable.ic_dialog_alert);
-            detailText.setText("From: " + notifications.get(position).getSender());
-        } else if (type == 3){ //contact request
+        } else if (notifications.get(position).getClass() == NotificationRequest.class){ //contact request
             imageView.setImageResource(android.R.drawable.ic_dialog_email);
-            detailText.setText("From: " + notifications.get(position).getSender());
         } else {
             //TODO throw error here
         }
 
         titleText.setText(notifications.get(position).getTitle());
+        detailText.setText(notifications.get(position).getDetailedTitle());
         return view;
     }
 }
