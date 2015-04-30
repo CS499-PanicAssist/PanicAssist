@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.parse.ParseObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -28,7 +35,8 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences sharedPrefNotifications;
     static SharedPreferences sharedPrefSettings;
     static SharedPreferences sharedPrefContacts;
-    static SharedPreferences.Editor editor;
+    static SharedPreferences.Editor notificationEditor;
+    static SharedPreferences sharedPrefQuickTexts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +46,9 @@ public class MainActivity extends ActionBarActivity {
         sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
         sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
+        sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
 
-        editor = sharedPrefNotifications.edit();
+        notificationEditor = sharedPrefNotifications.edit();
         ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
 
         //sets phone image button click listener
@@ -66,8 +75,8 @@ public class MainActivity extends ActionBarActivity {
         notifications = new ArrayList<Notification>();
 
         if (!sharedPrefNotifications.contains("welcome")){ //if first launch then add welcome notification
-            editor.putString("welcome", getResources().getString(R.string.welcomeMessage));
-            editor.commit();
+            notificationEditor.putString("welcome", getResources().getString(R.string.welcomeMessage));
+            notificationEditor.commit();
         }
 
         if (!sharedPrefNotifications.getString("welcome", "*").equals("*")){
@@ -237,22 +246,22 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(DialogInterface dialog, int id) {
 
                     if (notification.getTitle().equals(getResources().getString(R.string.welcome))) { //is welcome info
-                        editor.putString("welcome", "*"); //make a "*" so that we know ist been viewed and deleted
+                        notificationEditor.putString("welcome", "*"); //make a "*" so that we know ist been viewed and deleted
                     } else { //is trying to delete info that is not welcome info
 
                         for (int j = 0; j < 50; j++) { //removes text from preferences
                             //note: notification id isnt necessary  since all alerts should be differnt somehow
                             if (sharedPrefNotifications.contains("notification" + j) && sharedPrefNotifications.getString("title" + j, "*").equalsIgnoreCase(notification.getTitle())) {
-                                editor.remove("notification" + j);
-                                editor.remove("title" + j);
-                                editor.remove("message" + j);
-                                editor.commit();
+                                notificationEditor.remove("notification" + j);
+                                notificationEditor.remove("title" + j);
+                                notificationEditor.remove("message" + j);
+                                notificationEditor.commit();
                                 break;
                             }
                         }
                     }
 
-                    editor.commit();
+                    notificationEditor.commit();
                     notifications.remove(notification);
                     notificationListAdapter.notifyDataSetChanged();
 
@@ -326,9 +335,9 @@ public class MainActivity extends ActionBarActivity {
     private void deleteNotificationRequest(Notification notification){
         for (int j = 0; j < 50; j++) { //removes request from preferences
             if (sharedPrefNotifications.getString("notification" + j, "*").equalsIgnoreCase("request") && sharedPrefNotifications.getString("sender" + j, "*").equalsIgnoreCase(notification.getSender())) {
-                editor.remove("notification" + j);
-                editor.remove("sender" + j);
-                editor.commit();
+                notificationEditor.remove("notification" + j);
+                notificationEditor.remove("sender" + j);
+                notificationEditor.commit();
                 break;
             }
         }
@@ -353,32 +362,65 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
-    public static boolean sendDefaultAlert(Context context){
+    public boolean sendDefaultAlert(Context context){
         //TODO implement
 
-        //Todo delete between these lines
-
+        //Todo delete between these lines----------------------------------------------
         Notification hi = new NotificationAlert("hotrod2", "Looks like i might need sum help!", 40.712312, -74.0057372, "10:30PM", "10/10/15");
         notifications.add(hi);
         notifications.add(new NotificationRequest("coolguy5"));
         notificationListAdapter.notifyDataSetChanged();
-        editor.putString("notification1", "request");
-        editor.putString("sender1", "coolguy5");
+        notificationEditor.putString("notification1", "request");
+        notificationEditor.putString("sender1", "coolguy5");
 
-        editor.putString("notification0", "alert");
-        editor.putString("sender0", "hotrod2");
-        editor.putString("message0", hi.getMessage());
-        editor.putString("personalMessage0", "Looks like i might need sum help!");
-        editor.putString("latitude0", "40.712312");
-        editor.putString("longitude0", "-74.0057372");
-        editor.putString("time0", "10:30PM");
-        editor.putString("date0", "10/10/15");
+        notificationEditor.putString("notification0", "alert");
+        notificationEditor.putString("sender0", "hotrod2");
+        notificationEditor.putString("message0", hi.getMessage());
+        notificationEditor.putString("personalMessage0", "Looks like i might need sum help!");
+        notificationEditor.putString("latitude0", "40.712312");
+        notificationEditor.putString("longitude0", "-74.0057372");
+        notificationEditor.putString("time0", "10:30PM");
+        notificationEditor.putString("date0", "10/10/15");
 
-        editor.commit();
+        notificationEditor.commit();
+        /////till here----------------------------------------------------------------
 
-        /////till here
 
-        Toast.makeText(context, "Not implemented yet, but will be!", Toast.LENGTH_SHORT).show();
+        for (int j = 0; j < 50; j++) { //removes request from preferences
+            if (sharedPrefContacts.contains("displayname" + j)) {
+                String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
+                String lat = "40.712312";
+                String lon = "-74.0057372";
+                String name = sharedPrefSettings.getString("username", "No username set");
+                String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + name + ")";
+                String fullSMS = userMessage + " My location is: " + geoUri;
+                DateFormat df = new SimpleDateFormat("h:mm a");
+                String time = df.format(Calendar.getInstance().getTime());
+                df = new SimpleDateFormat("MM/dd/yy");
+                String date = df.format(Calendar.getInstance().getTime());
+
+                if (sharedPrefContacts.getString("isConfirmed" + j, "*").equalsIgnoreCase("true")){
+                    if (sharedPrefContacts.getString("isNumber" + j, "*").equalsIgnoreCase("true")){ //send text here
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null , fullSMS, null, null);
+                    } else{
+                        ParseObject notification = new ParseObject("Notification"); //make new notification
+                        notification.put("sender", sharedPrefSettings.getString("username", "no username"));
+                        notification.put("receiver", sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"));
+                        notification.put("message", userMessage);
+                        notification.put("lat", lat);
+                        notification.put("lon", lon);
+                        notification.put("time", time);
+                        notification.put("date", date);
+                        notification.saveInBackground(); //save notification on server
+
+                        //TODO send push notification to alert user of new alert
+                    }
+                }
+            }
+        }
+
+        Toast.makeText(context, "Alerts sent!", Toast.LENGTH_SHORT).show();
         return false;
     }
 }

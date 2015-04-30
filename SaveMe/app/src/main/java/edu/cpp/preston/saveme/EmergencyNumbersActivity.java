@@ -108,7 +108,6 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
                     }
                 }
 
-
                 phoneNumbers.add(new PhoneNumber(nameText.getText().toString(), numberText.getText().toString()));
                 phoneNumberListAdapter.notifyDataSetChanged();
 

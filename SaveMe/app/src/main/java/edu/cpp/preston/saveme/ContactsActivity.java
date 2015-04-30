@@ -125,6 +125,11 @@ public class ContactsActivity extends ActionBarActivity {
                 } else if(numberOrUserText.getText().length() == 0){
                     Toast.makeText(getApplicationContext(), "Enter a phone number or user name", Toast.LENGTH_SHORT).show();
                     return;
+                } else if (phoneNumberRadio.isChecked() && numberOrUserText.getText().toString().replaceAll("[^0-9]","").length() < 10){
+                    Toast.makeText(getApplicationContext(), "Phone number must include area code", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (phoneNumberRadio.isChecked() && numberOrUserText.getText().toString().replaceAll("[^0-9]","").length() < 11){
+                    numberOrUserText.setText("1" + numberOrUserText.getText());
                 }
 
                 Contact newContact = new Contact(nameText.getText().toString(), numberOrUserText.getText().toString(), phoneNumberRadio.isChecked(), false);

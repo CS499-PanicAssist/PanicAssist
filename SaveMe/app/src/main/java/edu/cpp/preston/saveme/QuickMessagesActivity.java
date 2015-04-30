@@ -26,12 +26,12 @@ public class QuickMessagesActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_messages);
 
-        final SharedPreferences sharedPrefPhoneNumbers = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
 
         quickTexts = new ArrayList<String>();
         for (int i = 0; i < 50; i++){ //gets preferences
-            if (sharedPrefPhoneNumbers.contains("quicktext" + i)){
-                quickTexts.add(sharedPrefPhoneNumbers.getString("quicktext" + i,"ERROR"));
+            if (sharedPrefQuickTexts.contains("quicktext" + i)){
+                quickTexts.add(sharedPrefQuickTexts.getString("quicktext" + i,"ERROR"));
             }
         }
 
@@ -56,8 +56,8 @@ public class QuickMessagesActivity extends ActionBarActivity {
                     quickTextListAdapter.notifyDataSetChanged();
 
                     for (int i = 0; i < 50; i++){ //add text to prefecences
-                        if (!sharedPrefPhoneNumbers.contains("quicktext" + i)){
-                            SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
+                        if (!sharedPrefQuickTexts.contains("quicktext" + i)){
+                            SharedPreferences.Editor editor = sharedPrefQuickTexts.edit();
                             editor.putString("quicktext" + i, messageEditText.getText().toString());
                             editor.commit();
 
