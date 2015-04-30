@@ -57,8 +57,7 @@
     <string name="quickMessages">Pre-typed messages</string>
     <string name="title_activity_account">Account</string>
     <string name="userName">User Name:</string>
-    <string name="userNameNote">Note: This is how other users can add you as a contact on their Save Me app. Your User Name is bound to the
-        primary account on this device. You my change your name if it is available.  Additionally, if another user adds you as a contact, that does NOT add them as
+    <string name="userNameNote">Note: This is how other users can add you as a contact on their Save Me app. If another user adds you as a contact, that does NOT add them as
         a contact for you, you must do so separately.</string>
     <string name="title_activity_quick_messages">Quick Messages</string>
     <string name="quickMessageDialog">Quick Message</string>

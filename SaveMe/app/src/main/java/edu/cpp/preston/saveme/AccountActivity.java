@@ -71,7 +71,9 @@ public class AccountActivity extends ActionBarActivity {
                             query.findInBackground(new FindCallback<ParseObject>() {
                                 public void done(List<ParseObject> queryUsernamesList, ParseException e) {
                                     if (e == null) {
-                                        if (queryUsernamesList.size() == 0) { //username is not taken so add it
+                                        if (queryUsernamesList.size() > 0 && queryUsernamesList.get(0).getString("email").equalsIgnoreCase(userEmail)){
+                                            //username already owned by email address, so do nothing
+                                        } else if (queryUsernamesList.size() == 0) { //username is not taken so add it
                                             changeUserName(userEmail, enteredText);
                                         } else { //username taken
                                             Toast.makeText(getApplicationContext(), "Username taken, please try again.", Toast.LENGTH_SHORT).show();
@@ -79,6 +81,7 @@ public class AccountActivity extends ActionBarActivity {
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Error, please try again later", Toast.LENGTH_SHORT).show();
                                     }
+                                    progress.dismiss();
                                 }
                             });
                         }

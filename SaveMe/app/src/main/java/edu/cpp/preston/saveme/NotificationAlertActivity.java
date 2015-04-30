@@ -53,22 +53,16 @@ public class NotificationAlertActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         final SharedPreferences sharedPrefNotifications = getActivity().getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
 
-                        for (int j = 0; j < 50; j++) { //removes alert from preferences
-                            if (sharedPrefNotifications.getString("notification" + j, "*").equalsIgnoreCase("alert") &&
-                                    sharedPrefNotifications.getString("message" + j, "*").equalsIgnoreCase(intent.getStringExtra("message"))) {
-                                SharedPreferences.Editor editor = sharedPrefNotifications.edit();
-                                editor.remove("notification" + j);
-                                editor.remove("sender" + j);
-                                editor.remove("message" + j);
-                                editor.remove("personalMessage" + j);
-                                editor.remove("latitude" + j);
-                                editor.remove("longitude" + j);
-                                editor.remove("time" + j);
-                                editor.remove("date" + j);
-                                editor.commit();
-                                break;
-                            }
-                        }
+                        int j = intent.getIntExtra("notificationNumber", -1);
+                        SharedPreferences.Editor editor = sharedPrefNotifications.edit();
+                        editor.remove("notification" + j);
+                        editor.remove("sender" + j);
+                        editor.remove("personalMessage" + j);
+                        editor.remove("latitude" + j);
+                        editor.remove("longitude" + j);
+                        editor.remove("time" + j);
+                        editor.remove("date" + j);
+                        editor.commit();
 
                         NavUtils.navigateUpFromSameTask(getActivity());
                     }

@@ -38,7 +38,7 @@
                 android:ems="10"
                 android:id="@+id/messageText"
                 android:background="@drawable/message"
-                android:text="Default Message"
+                android:hint="Personal message"
                 />
 
             <Button

@@ -5,6 +5,7 @@ public class NotificationAlert implements Notification {
 
     private String personalMessage, sender, time, date;
     private double lat, lon;
+    private int index;
 
     public NotificationAlert(String sender, String personalMessage, double latitude, double longitude, String time, String date) {
         this.personalMessage = personalMessage;
@@ -13,6 +14,7 @@ public class NotificationAlert implements Notification {
         this.lon = longitude;
         this.time = time;
         this.date = date;
+        this.index = -1;
     }
 
     public String getTime() {
@@ -53,5 +55,13 @@ public class NotificationAlert implements Notification {
 
     public double getLon(){
         return lon;
+    }
+
+    public int getIndex(){
+        return index;
+    }
+
+    public void setIndex(int i){
+        index = i;
     }
 }
