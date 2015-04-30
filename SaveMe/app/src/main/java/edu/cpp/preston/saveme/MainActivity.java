@@ -97,6 +97,15 @@ public class MainActivity extends ActionBarActivity {
                                             break;
                                         }
                                     }
+                                } else if (notification.getString("type").equalsIgnoreCase("requestReturn")){ //someone accepted a contact request
+                                    for (int j = 0; j < 50; j++){ //removes contact from preferences
+                                        if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(notification.getString("sender"))){
+                                            SharedPreferences.Editor editor = sharedPrefContacts.edit();
+                                            editor.putString("isConfirmed" + j, "true");
+                                            editor.commit();
+                                            break;
+                                        }
+                                    }
                                 } else if (notification.getString("type").equalsIgnoreCase("alert")){
                                     for (int j = 0; j < 50; j++) { //add alert notification to local storage
                                         if (!sharedPrefNotifications.contains("notification" + j)) {
@@ -374,7 +383,11 @@ public class MainActivity extends ActionBarActivity {
 
             builder.setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    //TODO send alert to other user that they can now alert this user
+                    ParseObject notification2 = new ParseObject("Notification"); //make new notification
+                    notification2.put("sender", username);
+                    notification2.put("type", "requestReturn");
+                    notification2.put("receiver", notification.getSender());
+                    notification2.saveEventually(); //save notification on server
 
                     deleteNotificationRequest(notification); //deletes notification from memory
                 }
@@ -430,21 +443,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public boolean sendDefaultAlert(Context context){
-        /*
-        //Todo delete between these lines----------------------------------------------
-        notificationEditor.putString("notification1", "request");
-        notificationEditor.putString("sender1", "coolguy5");
-        notificationEditor.commit();
-        /////till here----------------------------------------------------------------
-*/
 
         for (int j = 0; j < 50; j++) { //removes request from preferences
             if (sharedPrefContacts.contains("displayname" + j)) {
                 String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
                 String lat = "40.712312";
                 String lon = "-74.0057372";
-                String name = sharedPrefSettings.getString("username", "No username set");
-                String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + name + ")";
+                String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
                 String fullSMS = userMessage + " My location is: " + geoUri;
                 DateFormat df = new SimpleDateFormat("h:mm a");
                 String time = df.format(Calendar.getInstance().getTime());
@@ -457,7 +462,7 @@ public class MainActivity extends ActionBarActivity {
                         smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null , fullSMS, null, null);
                     } else{
                         ParseObject notification = new ParseObject("Notification"); //make new notification
-                        notification.put("sender", name);
+                        notification.put("sender", username);
                         notification.put("type", "alert");
                         notification.put("receiver", sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"));
                         notification.put("message", userMessage);
@@ -465,7 +470,7 @@ public class MainActivity extends ActionBarActivity {
                         notification.put("lon", lon);
                         notification.put("time", time);
                         notification.put("date", date);
-                        notification.saveInBackground(); //save notification on server
+                        notification.saveEventually(); //save notification on server
 
                         //TODO send push notification to alert user of new alert
                     }
