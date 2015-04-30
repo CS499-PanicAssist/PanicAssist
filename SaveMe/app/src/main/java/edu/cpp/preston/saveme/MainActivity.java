@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
@@ -27,6 +26,8 @@ public class MainActivity extends ActionBarActivity {
     private static ArrayList<Notification> notifications;
     private static NotificationAdapter notificationListAdapter;
     static SharedPreferences sharedPrefNotifications;
+    static SharedPreferences sharedPrefSettings;
+    static SharedPreferences sharedPrefContacts;
     static SharedPreferences.Editor editor;
 
     @Override
@@ -34,7 +35,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
+        sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
+
         editor = sharedPrefNotifications.edit();
         ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
 
@@ -161,6 +165,11 @@ public class MainActivity extends ActionBarActivity {
     //User clicks on alert image
     public void alertClick(View view) {
 
+        if (!alertAbleToSend()){ //cannot send an alert
+            Toast.makeText(getApplicationContext(), "Cannot send, please check settings!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setPositiveButton(R.string.send_default, new DialogInterface.OnClickListener() {
@@ -200,10 +209,18 @@ public class MainActivity extends ActionBarActivity {
         timer.start();
     }
 
-    private boolean alertAbleToSend(){
-        //TODO Check if alert is set up and would be able to be send if needed
+    private boolean alertAbleToSend(){ // returns true if username is chosen and has at least one confirmed contact
+        String username = sharedPrefSettings.getString("username", "*");
 
-        return true;
+        if (username.length() > 4) { // username has been set up
+            for (int i = 0; i < 50; i++){ //gets notifications from preferences file
+                if (sharedPrefContacts.contains("displayname" + i) && sharedPrefContacts.getString("isConfirmed" + i, "*").equalsIgnoreCase("true")){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void showNotificationDialog(final Notification notification){

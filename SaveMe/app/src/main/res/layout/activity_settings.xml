@@ -25,7 +25,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"/>
 
         <TextView
-            android:text="Coolguy5 delte me please"
+            android:text="@string/chooseAUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/accountName"

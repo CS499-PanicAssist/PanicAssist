@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.parse.ParseObject;
 
 public class HelpActivity extends ActionBarActivity {
 
@@ -21,8 +22,6 @@ public class HelpActivity extends ActionBarActivity {
 
         Button b = (Button) findViewById(R.id.tutorial);
 
-        MainActivity.sendDefaultAlert(getApplicationContext());
-
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,7 +30,6 @@ public class HelpActivity extends ActionBarActivity {
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

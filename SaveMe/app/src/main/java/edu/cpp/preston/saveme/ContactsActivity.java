@@ -137,11 +137,11 @@ public class ContactsActivity extends ActionBarActivity {
 
                         if (newContact.isNumber()){
                             editor.putString("isNumber" + i, "true");
+                            editor.putString("isConfirmed" + i, "true");
                         } else{
                             editor.putString("isNumber" + i, "false");
+                            editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
                         }
-
-                        editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
 
                         editor.commit();
                         break;
