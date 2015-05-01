@@ -145,9 +145,15 @@ public class MainActivity extends ActionBarActivity {
     private void reloadNotificationListView() {
         notifications = new ArrayList<Notification>();
 
-        if (!sharedPrefNotifications.contains("welcome")){ //if first launch then add welcome notification
+        if (!sharedPrefNotifications.contains("welcome")){ //if first launch then add welcome notification and default quick text
             notificationEditor.putString("welcome", getResources().getString(R.string.welcomeMessage));
             notificationEditor.commit();
+
+            SharedPreferences.Editor editor = sharedPrefQuickTexts.edit(); //default quick texts
+            editor.putString("quicktext0", "Please call me, if I don't respond I may be in an emergency.  My location is attached.");
+            editor.putString("quicktext1", "Help, this is [your name here] I'm in danger!");
+            editor.putString("quicktext2", "I'm just testing a new app, please disregard this message..");
+            editor.commit();
         }
 
         if (!sharedPrefNotifications.getString("welcome", "*").equals("*")){
@@ -360,6 +366,8 @@ public class MainActivity extends ActionBarActivity {
                     NotificationAlert notification2 = (NotificationAlert) notification;
 
                     intent.putExtra("message", notification2.getMessage());
+                    intent.putExtra("name", notification2.getSender());
+                    intent.putExtra("time", notification2.getTime());
                     intent.putExtra("personalMessage", notification2.getPersonalMessage());
                     intent.putExtra("lat", notification2.getLat() + "");
                     intent.putExtra("lon", notification2.getLon() + "");
@@ -442,13 +450,13 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
-    public boolean sendDefaultAlert(Context context){
+    public void sendDefaultAlert(Context context){
 
         for (int j = 0; j < 50; j++) { //removes request from preferences
             if (sharedPrefContacts.contains("displayname" + j)) {
                 String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
-                String lat = "40.712312";
-                String lon = "-74.0057372";
+                String lat = "36.99897847579512";
+                String lon = "-109.04517084362851";
                 String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
                 String fullSMS = userMessage + " My location is: " + geoUri;
                 DateFormat df = new SimpleDateFormat("h:mm a");
@@ -479,6 +487,13 @@ public class MainActivity extends ActionBarActivity {
         }
 
         Toast.makeText(context, "Alerts sent!", Toast.LENGTH_SHORT).show();
-        return false;
+    }
+
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 }

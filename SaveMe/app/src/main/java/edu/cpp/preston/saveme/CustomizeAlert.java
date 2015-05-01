@@ -8,47 +8,50 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CustomizeAlert extends ActionBarActivity {
 
     private ArrayList<String> quickTexts;
     private ArrayList<Contact> contacts;
     private ContactAdapter contactListAdapter;
+    private boolean isChecked[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customize_alert);
 
+        final SharedPreferences sharedPrefQuickText = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+        final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
+
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        final EditText messageText = (EditText) findViewById(R.id.messageText);
+        messageText.setText(sharedPrefQuickText.getString("quicktext0", ""));
 
-        Button sendButton = (Button) findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendAlert();
-            }
-        });
-
-        final SharedPreferences sharedPrefPhoneNumbers = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
-        final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
 
         quickTexts = new ArrayList<String>();
         for (int i = 0; i < 50; i++){ //gets preferences
-            if (sharedPrefPhoneNumbers.contains("quicktext" + i)){
-                quickTexts.add(sharedPrefPhoneNumbers.getString("quicktext" + i,"ERROR"));
+            if (sharedPrefQuickText.contains("quicktext" + i)){
+                quickTexts.add(sharedPrefQuickText.getString("quicktext" + i,"ERROR"));
             }
         }
 
@@ -72,7 +75,6 @@ public class CustomizeAlert extends ActionBarActivity {
                 builder.setTitle("Choose a message")
                         .setItems(shortMessages, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                TextView messageText = (TextView) findViewById(R.id.messageText);
                                 messageText.setText(quickTexts.get(which)); //sets message text to quick text user has selected
                             }
                         });
@@ -101,19 +103,44 @@ public class CustomizeAlert extends ActionBarActivity {
         }
 
         final ListView listView = (ListView) findViewById(R.id.contactsListView);
+
+
+
         contactListAdapter = new ContactAdapter(this, contacts, true);
         listView.setAdapter(contactListAdapter);
+
+
+        //HELPpPPPP VVVVVVVVVVVVVVVVVVVVVVVVV
+
+        isChecked = new boolean[contacts.size()];
+        for (int i = 0; i < isChecked.length; i++){
+            isChecked[i] = true;
+        }
+
+        //HELP111111111111111111111111111111 ^^^^^6
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
 
-                if (checkBox.isChecked()){
+                if (checkBox.isChecked()) {
                     checkBox.setChecked(false);
-                } else{
+                    isChecked[i] = false;
+                } else {
                     checkBox.setChecked(true);
+                    isChecked[i] = true;
                 }
+            }
+        });
+
+
+
+        Button sendButton = (Button) findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAlert(messageText.getText().toString());
             }
         });
     }
@@ -129,25 +156,46 @@ public class CustomizeAlert extends ActionBarActivity {
         return this;
     }
 
-    public boolean sendAlert(){
-        //TODO Send message according to inputs on this activity from the user
-        Toast.makeText(getApplicationContext(), "Not implemented yet, but will be!", Toast.LENGTH_SHORT).show();
+    public void sendAlert(String message){
+        SharedPreferences sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
+        String username = sharedPrefSettings.getString("username", "*");
 
-        return true;
-    }
+        if (username.length() < 4){
+            Toast.makeText(getApplicationContext(), "Get a username first!", Toast.LENGTH_SHORT).show();
+        } else {
+            for (int i = 0; i < contactListAdapter.getCount(); i++){
+                View view = contactListAdapter.getView(i, null, null); //hardly right!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
+                String lat = "36.99897847579512"; //TODO get real lat and lon
+                String lon = "-109.04517084362851";
+                DateFormat df = new SimpleDateFormat("h:mm a");
+                String time = df.format(Calendar.getInstance().getTime());
+                df = new SimpleDateFormat("MM/dd/yy");
+                String date = df.format(Calendar.getInstance().getTime());
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                if (isChecked[i]){
+
+                    if (contacts.get(i).isNumber()){
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage("+" + contacts.get(i).getID(), null , message, null, null);
+                    } else {
+                        ParseObject notification = new ParseObject("Notification"); //make new notification
+                        notification.put("sender", username);
+                        notification.put("type", "alert");
+                        notification.put("receiver", contacts.get(i).getID());
+                        notification.put("message", message);
+                        notification.put("lat", lat);
+                        notification.put("lon", lon);
+                        notification.put("time", time);
+                        notification.put("date", date);
+                        notification.saveEventually(); //save notification on server
+                    }
+                }
+            }
+
+            Toast.makeText(getApplicationContext(), "Alerts sent!", Toast.LENGTH_SHORT).show();
+            finish();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

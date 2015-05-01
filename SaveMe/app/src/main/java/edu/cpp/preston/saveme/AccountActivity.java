@@ -72,7 +72,8 @@ public class AccountActivity extends ActionBarActivity {
                                 public void done(List<ParseObject> queryUsernamesList, ParseException e) {
                                     if (e == null) {
                                         if (queryUsernamesList.size() > 0 && queryUsernamesList.get(0).getString("email").equalsIgnoreCase(userEmail)){
-                                            //username already owned by email address, so do nothing
+                                            editor.putString("username", enteredText);
+                                            editor.commit();
                                         } else if (queryUsernamesList.size() == 0) { //username is not taken so add it
                                             changeUserName(userEmail, enteredText);
                                         } else { //username taken

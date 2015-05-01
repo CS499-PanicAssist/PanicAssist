@@ -53,12 +53,12 @@
             </LinearLayout>
     </LinearLayout>
 
-    <CheckBox
+    <!--CheckBox
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/sendGPSLocation"
         android:id="@+id/checkboxSendLocation"
-        android:checked="true"/>
+        android:checked="true"/-->
 
     <!-- To label and listview -->
     <LinearLayout
