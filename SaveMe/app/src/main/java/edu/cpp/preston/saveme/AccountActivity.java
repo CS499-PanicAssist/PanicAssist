@@ -100,7 +100,7 @@ public class AccountActivity extends ActionBarActivity {
 
         query.whereEqualTo("email", userEmail);
         query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> queryEmailList, ParseException e) {
+            public void done(final List<ParseObject> queryEmailList, ParseException e) {
                 if (e == null) {
                     if (queryEmailList.size() == 0) { //user is not made yet in database
                         final ParseObject user = new ParseObject("User"); //make new user
@@ -127,6 +127,7 @@ public class AccountActivity extends ActionBarActivity {
                                     gameScore.put("username", newUsername); //update username
                                     gameScore.saveInBackground();
                                     editor.putString("username", newUsername);
+                                    editor.putString("userObjectId", queryEmailList.get(0).getObjectId()); //this users id is now saved, and is permanent
                                     editor.commit();
                                     progress.dismiss();
                                     Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
