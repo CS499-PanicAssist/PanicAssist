@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -42,12 +46,14 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
     String username, userId;
+    GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        gps = new GPSTracker(this);
         sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
         sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
@@ -67,20 +73,20 @@ public class MainActivity extends ActionBarActivity {
         });
 
         //makes alert image correct on load
-        if (alertAbleToSend()){
+        if (alertAbleToSend()) {
             ImageView alertImage = (ImageView) findViewById(R.id.alertImageView);
             alertImage.setImageResource(R.drawable.savemelogo);
         }
 
-        if (username.length() > 4){
+        if (username.length() > 4) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Notification");
 
             query.whereEqualTo("receiver", username);
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> queryNotificationList, ParseException e) {
                     if (e == null) {
-                        for (ParseObject notification : queryNotificationList){ //add each new notification to the local file system
-                            if (notification.getString("type").equalsIgnoreCase("info")){
+                        for (ParseObject notification : queryNotificationList) { //add each new notification to the local file system
+                            if (notification.getString("type").equalsIgnoreCase("info")) {
                                 for (int j = 0; j < 50; j++) { //add alert notification to local storage
                                     if (!sharedPrefNotifications.contains("notification" + j)) {
                                         notificationEditor.putString("notification" + j, "info");
@@ -89,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
                                         break;
                                     }
                                 }
-                            } else if (notification.getString("type").equalsIgnoreCase("request")){
+                            } else if (notification.getString("type").equalsIgnoreCase("request")) {
                                 for (int j = 0; j < 50; j++) { //add alert notification to local storage
                                     if (!sharedPrefNotifications.contains("notification" + j)) {
                                         notificationEditor.putString("notification" + j, "request");
@@ -132,9 +138,9 @@ public class MainActivity extends ActionBarActivity {
                                                 break;
                                             }
                                         }
-                                    }  else if (notification.getString("type").equalsIgnoreCase("requestReturn")){ //someone accepted a contact request
-                                        for (int j = 0; j < 50; j++){ //edits contact to be confirmed
-                                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(notification.getString("sender"))){
+                                    } else if (notification.getString("type").equalsIgnoreCase("requestReturn")) { //someone accepted a contact request
+                                        for (int j = 0; j < 50; j++) { //edits contact to be confirmed
+                                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(notification.getString("sender"))) {
                                                 SharedPreferences.Editor editor = sharedPrefContacts.edit();
                                                 editor.putString("userObjectId" + j, notification.getString("senderId"));
                                                 editor.putString("isConfirmed" + j, "true");
@@ -161,7 +167,6 @@ public class MainActivity extends ActionBarActivity {
             });
 
 
-
         }
 
         reloadNotificationListView();
@@ -170,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
     private void reloadNotificationListView() {
         notifications = new ArrayList<Notification>();
 
-        if (!sharedPrefNotifications.contains("welcome")){ //if first launch then add welcome notification and default quick text
+        if (!sharedPrefNotifications.contains("welcome")) { //if first launch then add welcome notification and default quick text
             notificationEditor.putString("welcome", getResources().getString(R.string.welcomeMessage));
             notificationEditor.commit();
 
@@ -181,20 +186,20 @@ public class MainActivity extends ActionBarActivity {
             editor.commit();
         }
 
-        if (!sharedPrefNotifications.getString("welcome", "*").equals("*")){
+        if (!sharedPrefNotifications.getString("welcome", "*").equals("*")) {
             notifications.add(new NotificationInfo(getResources().getString(R.string.welcome), getResources().getString(R.string.welcomeMessage)));
         }
 
-        for (int i = 0; i < 50; i++){ //gets notifications from preferences file
-            if (sharedPrefNotifications.contains("notification" + i)){
-                if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("info")){
-                    notifications.add(new NotificationInfo(sharedPrefNotifications.getString("title" + i, "ERROR"), sharedPrefNotifications.getString("message" + i, "ERROR") ));
-                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("request")){
+        for (int i = 0; i < 50; i++) { //gets notifications from preferences file
+            if (sharedPrefNotifications.contains("notification" + i)) {
+                if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("info")) {
+                    notifications.add(new NotificationInfo(sharedPrefNotifications.getString("title" + i, "ERROR"), sharedPrefNotifications.getString("message" + i, "ERROR")));
+                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("request")) {
                     NotificationRequest n = new NotificationRequest(sharedPrefNotifications.getString("sender" + i, "ERROR"));
 
                     n.setSenderId(sharedPrefNotifications.getString("senderId" + i, "ERROR"));
                     notifications.add(n); //CHAnged from sender to senderId
-                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("alert")){
+                } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("alert")) {
 
                     NotificationAlert toAdd = new NotificationAlert(sharedPrefNotifications.getString("sender" + i, "ERROR"), sharedPrefNotifications.getString("personalMessage" + i, "ERROR"),
                             Double.parseDouble(sharedPrefNotifications.getString("latitude" + i, "ERROR")), Double.parseDouble(sharedPrefNotifications.getString("longitude" + i, "ERROR")),
@@ -250,7 +255,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
@@ -265,8 +270,8 @@ public class MainActivity extends ActionBarActivity {
         } else if (id == R.id.action_help) { //help was selected in menu dropdown
             Intent intent = new Intent(this, HelpActivity.class);
             startActivity(intent);
-        } else if (id == R.id.headphones_menu_checkbox){
-            if (item.isChecked()){ //turn off alert on unplug
+        } else if (id == R.id.headphones_menu_checkbox) {
+            if (item.isChecked()) { //turn off alert on unplug
                 sendAlertOnUnplug(false);
                 item.setChecked(false);
                 item.setIcon(R.drawable.jack);
@@ -285,7 +290,7 @@ public class MainActivity extends ActionBarActivity {
     //User clicks on alert image
     public void alertClick(View view) {
 
-        if (!alertAbleToSend()){ //cannot send an alert
+        if (!alertAbleToSend()) { //cannot send an alert
             Toast.makeText(getApplicationContext(), "Cannot send, please check settings!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -318,7 +323,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onFinish() {
-                if (dialog.isShowing()){ // Dialog box is still open after allotted time, therefor send alert
+                if (dialog.isShowing()) { // Dialog box is still open after allotted time, therefor send alert
                     dialog.cancel();
                     sendDefaultAlert(getApplicationContext());
                 }
@@ -329,10 +334,10 @@ public class MainActivity extends ActionBarActivity {
         timer.start();
     }
 
-    private boolean alertAbleToSend(){ // returns true if username is chosen and has at least one confirmed contact
+    private boolean alertAbleToSend() { // returns true if username is chosen and has at least one confirmed contact
         if (username.length() > 4) { // username has been set up
-            for (int i = 0; i < 50; i++){ //gets notifications from preferences file
-                if (sharedPrefContacts.contains("displayname" + i) && sharedPrefContacts.getString("isConfirmed" + i, "*").equalsIgnoreCase("true")){
+            for (int i = 0; i < 50; i++) { //gets notifications from preferences file
+                if (sharedPrefContacts.contains("displayname" + i) && sharedPrefContacts.getString("isConfirmed" + i, "*").equalsIgnoreCase("true")) {
                     return true;
                 }
             }
@@ -341,11 +346,11 @@ public class MainActivity extends ActionBarActivity {
         return false;
     }
 
-    private void showNotificationDialog(final Notification notification){
+    private void showNotificationDialog(final Notification notification) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        if (notification.getClass() == NotificationInfo.class){ //info message
+        if (notification.getClass() == NotificationInfo.class) { //info message
 
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
@@ -383,7 +388,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
-        } else if (notification.getClass() == NotificationAlert.class){ //alert
+        } else if (notification.getClass() == NotificationAlert.class) { //alert
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
                     .setIcon(android.R.drawable.ic_dialog_alert);
@@ -411,7 +416,7 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
-        } else if (notification.getClass() == NotificationRequest.class){ //contact request
+        } else if (notification.getClass() == NotificationRequest.class) { //contact request
 
             builder.setMessage(notification.getMessage())
                     .setTitle(notification.getTitle())
@@ -449,7 +454,7 @@ public class MainActivity extends ActionBarActivity {
         builder.create().show();
     }
 
-    private void deleteNotificationRequest(Notification notification){
+    private void deleteNotificationRequest(Notification notification) {
         for (int j = 0; j < 50; j++) { //removes request from preferences
             if (sharedPrefNotifications.getString("notification" + j, "*").equalsIgnoreCase("request") && sharedPrefNotifications.getString("sender" + j, "*").equalsIgnoreCase(notification.getSender())) {
                 notificationEditor.remove("notification" + j);
@@ -463,64 +468,70 @@ public class MainActivity extends ActionBarActivity {
         notificationListAdapter.notifyDataSetChanged();
     }
 
-    private Activity getActivity(){
+    private Activity getActivity() {
         return this;
     }
 
-    private void sendAlertOnUnplug(boolean turnFeatureOn){
+    private void sendAlertOnUnplug(boolean turnFeatureOn) {
         //TODO if true have app send alert if headphones unplug
         //else turn off that feature
         //and save it to file
     }
 
-    private boolean sendAlertOnUnplug(){
+    private boolean sendAlertOnUnplug() {
         //TODO return true if should send alert on unplug
 
         return true;
     }
 
-    public void sendDefaultAlert(Context context){
+    public void sendDefaultAlert(Context context) {
 
-        for (int j = 0; j < 50; j++) { //removes request from preferences
-            if (sharedPrefContacts.contains("displayname" + j)) {
-                String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
-                String lat = "36.99897847579512";
-                String lon = "-109.04517084362851";
-                String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
-                String fullSMS = userMessage + " My location is: " + geoUri;
-                DateFormat df = new SimpleDateFormat("h:mm a");
-                String time = df.format(Calendar.getInstance().getTime());
-                df = new SimpleDateFormat("MM/dd/yy");
-                String date = df.format(Calendar.getInstance().getTime());
+        if (gps.canGetLocation()){
+            String lat = gps.getLatitude() + "";
+            String lon = gps.getLongitude() + "";
+            String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
+            String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
+            String myLocaion = "My location is: " + geoUri;
 
-                if (sharedPrefContacts.getString("isConfirmed" + j, "*").equalsIgnoreCase("true")){
-                    if (sharedPrefContacts.getString("isNumber" + j, "*").equalsIgnoreCase("true")){ //send text here
-                        SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null , fullSMS, null, null);
-                    } else{
-                        ParseObject notification = new ParseObject("Notification"); //make new notification
-                        notification.put("sender", username);
-                        notification.put("type", "alert");
-                        notification.put("receiverId", sharedPrefContacts.getString("userObjectId" + j, "ERROR"));
-                        notification.put("message", userMessage);
-                        notification.put("lat", lat);
-                        notification.put("lon", lon);
-                        notification.put("time", time);
-                        notification.put("date", date);
-                        notification.saveEventually(); //save notification on server
+            for (int j = 0; j < 50; j++) { //removes request from preferences
+                if (sharedPrefContacts.contains("displayname" + j)) {
 
-                        //TODO send push notification to alert user of new alert
+                    DateFormat df = new SimpleDateFormat("h:mm a");
+                    String time = df.format(Calendar.getInstance().getTime());
+                    df = new SimpleDateFormat("MM/dd/yy");
+                    String date = df.format(Calendar.getInstance().getTime());
+
+                    if (sharedPrefContacts.getString("isConfirmed" + j, "*").equalsIgnoreCase("true")) {
+                        if (sharedPrefContacts.getString("isNumber" + j, "*").equalsIgnoreCase("true")) { //send text here
+                            SmsManager smsManager = SmsManager.getDefault();
+                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, userMessage, null, null);
+                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, myLocaion, null, null);
+                        } else {
+                            ParseObject notification = new ParseObject("Notification"); //make new notification
+                            notification.put("sender", username);
+                            notification.put("type", "alert");
+                            notification.put("receiverId", sharedPrefContacts.getString("userObjectId" + j, "ERROR"));
+                            notification.put("message", userMessage);
+                            notification.put("lat", lat);
+                            notification.put("lon", lon);
+                            notification.put("time", time);
+                            notification.put("date", date);
+                            notification.saveEventually(); //save notification on server
+
+                            //TODO send push notification to alert user of new alert
+                        }
                     }
                 }
             }
-        }
 
-        Toast.makeText(context, "Alerts sent!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Alerts sent!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Unable to get location!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void onRestart()
-    {
+    public void onRestart() {
         super.onRestart();
         finish();
         startActivity(getIntent());

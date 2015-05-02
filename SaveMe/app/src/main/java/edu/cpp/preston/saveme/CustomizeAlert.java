@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -30,6 +33,7 @@ public class CustomizeAlert extends ActionBarActivity {
     private ArrayList<String> quickTexts;
     private ArrayList<Contact> contacts;
     private ContactAdapter contactListAdapter;
+    private LocationManager locationManager;
     private boolean isChecked[];
 
     @Override
@@ -37,6 +41,7 @@ public class CustomizeAlert extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customize_alert);
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final SharedPreferences sharedPrefQuickText = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
         final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
 
@@ -157,9 +162,21 @@ public class CustomizeAlert extends ActionBarActivity {
         return this;
     }
 
-    public void sendAlert(String message){
+    public void sendAlert(String userMessage){
+
+        Criteria criteria = new Criteria();
         SharedPreferences sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         String username = sharedPrefSettings.getString("username", "*");
+        String provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(provider);
+        String lat = location.getLatitude() + "";
+        String lon = location.getLongitude() + "";
+        String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
+        String fullSMS = userMessage + " My location is: " + geoUri;
+        DateFormat df = new SimpleDateFormat("h:mm a");
+        String time = df.format(Calendar.getInstance().getTime());
+        df = new SimpleDateFormat("MM/dd/yy");
+        String date = df.format(Calendar.getInstance().getTime());
 
         if (username.length() < 4){
             Toast.makeText(getApplicationContext(), "Get a username first!", Toast.LENGTH_SHORT).show();
@@ -168,24 +185,18 @@ public class CustomizeAlert extends ActionBarActivity {
                 View view = contactListAdapter.getView(i, null, null); //hardly right!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
-                String lat = "36.99897847579512"; //TODO get real lat and lon
-                String lon = "-109.04517084362851";
-                DateFormat df = new SimpleDateFormat("h:mm a");
-                String time = df.format(Calendar.getInstance().getTime());
-                df = new SimpleDateFormat("MM/dd/yy");
-                String date = df.format(Calendar.getInstance().getTime());
 
                 if (checkBox.isChecked()){
 
                     if (contacts.get(i).isNumber()){
                         SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage("+" + contacts.get(i).getID(), null , message, null, null);
+                        smsManager.sendTextMessage("+" + contacts.get(i).getID(), null , fullSMS, null, null);
                     } else {
                         ParseObject notification = new ParseObject("Notification"); //make new notification
                         notification.put("sender", username);
                         notification.put("type", "alert");
                         notification.put("receiverId", contacts.get(i).getContactId());
-                        notification.put("message", message);
+                        notification.put("message", userMessage);
                         notification.put("lat", lat);
                         notification.put("lon", lon);
                         notification.put("time", time);
