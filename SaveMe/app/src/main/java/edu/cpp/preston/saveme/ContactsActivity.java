@@ -17,9 +17,13 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactsActivity extends ActionBarActivity {
 
@@ -138,40 +142,68 @@ public class ContactsActivity extends ActionBarActivity {
                     return;
                 }
 
-                Contact newContact = new Contact(nameText.getText().toString(), numberOrUserText.getText().toString(), phoneNumberRadio.isChecked(), false);
-                SharedPreferences sharedPrefSettings = getApplicationContext().getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
+                final Contact newContact = new Contact(nameText.getText().toString(), numberOrUserText.getText().toString(), phoneNumberRadio.isChecked(), false);
+                final SharedPreferences sharedPrefSettings = getApplicationContext().getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
 
                 if (sharedPrefSettings.contains("username")){
-                    for (int i = 0; i < 50; i++){ //add contact to prefecences
-                        if (!sharedPrefContacts.contains("displayname" + i)){
-                            SharedPreferences.Editor editor = sharedPrefContacts.edit();
-                            editor.putString("displayname" + i, newContact.getdisplayName());
-                            editor.putString("usernameOrNumber" + i, newContact.getID());
 
-                            if (newContact.isNumber()){
+                    final SharedPreferences.Editor editor = sharedPrefContacts.edit();
+
+                    if (!newContact.isNumber()){ //a user
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+
+                        query.whereEqualTo("username", newContact.getID());
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            public void done(List<ParseObject> queryNotificationList, ParseException e) {
+                                if (e == null) {
+                                    if (queryNotificationList.size() == 0){
+                                        Toast.makeText(getApplicationContext(), "No user with that username currently", Toast.LENGTH_SHORT).show();
+                                    } else{
+                                        for (int i = 0; i < 50; i++) { //add contact to prefecences
+                                            if (!sharedPrefContacts.contains("displayname" + i)) {
+                                                editor.putString("displayname" + i, newContact.getdisplayName());
+                                                editor.putString("usernameOrNumber" + i, newContact.getID());
+                                                editor.putString("isNumber" + i, "false");
+                                                editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
+
+                                                ParseObject request = new ParseObject("Notification"); //make new notification
+                                                request.put("sender", sharedPrefSettings.getString("username", "ERROR"));
+                                                request.put("type", "request");
+                                                request.put("receiver", numberOrUserText.getText().toString());
+                                                request.put("senderId", sharedPrefSettings.getString("userObjectId", "*"));
+                                                request.saveEventually(); //save on server
+
+                                                editor.commit();
+
+                                                contacts.add(newContact);
+                                                contactListAdapter.notifyDataSetChanged();
+                                                nameText.setText("");
+                                                numberOrUserText.setText("");
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else { //a phone number
+                        for (int i = 0; i < 50; i++){ //add contact to prefecences
+                            if (!sharedPrefContacts.contains("displayname" + i)){
+                                editor.putString("displayname" + i, newContact.getdisplayName());
+                                editor.putString("usernameOrNumber" + i, newContact.getID());
                                 editor.putString("isNumber" + i, "true");
                                 editor.putString("isConfirmed" + i, "true");
-                            } else{
-                                editor.putString("isNumber" + i, "false");
-                                editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
-
-                                ParseObject request = new ParseObject("Notification"); //make new notification
-                                request.put("sender", sharedPrefSettings.getString("username", "ERROR"));
-                                request.put("type", "request");
-                                request.put("receiver", numberOrUserText.getText().toString());
-                                request.put("senderId", sharedPrefSettings.getString("userObjectId", "*"));
-                                request.saveEventually(); //save on server
+                                editor.commit();
+                                contacts.add(newContact);
+                                contactListAdapter.notifyDataSetChanged();
+                                nameText.setText("");
+                                numberOrUserText.setText("");
+                                break;
                             }
-
-                            editor.commit();
-                            break;
                         }
                     }
-
-                    contacts.add(newContact);
-                    contactListAdapter.notifyDataSetChanged();
-                    nameText.setText("");
-                    numberOrUserText.setText("");
                 } else {
                     Toast.makeText(getApplicationContext(), "Must choose an account username first", Toast.LENGTH_SHORT).show();
                 }
