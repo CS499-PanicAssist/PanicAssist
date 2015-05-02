@@ -17,6 +17,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -102,10 +103,17 @@ public class AccountActivity extends ActionBarActivity {
             public void done(List<ParseObject> queryEmailList, ParseException e) {
                 if (e == null) {
                     if (queryEmailList.size() == 0) { //user is not made yet in database
-                        ParseObject user = new ParseObject("User"); //make new user
+                        final ParseObject user = new ParseObject("User"); //make new user
                         user.put("username", newUsername);
                         user.put("email", userEmail);
-                        user.saveInBackground();
+                        user.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                editor.putString("userObjectId", user.getObjectId()); //this users id is now saved, and is permanent
+                                editor.commit();
+                            }
+                        }); ;
+
                         editor.putString("username", newUsername);
                         editor.commit();
                         progress.dismiss();

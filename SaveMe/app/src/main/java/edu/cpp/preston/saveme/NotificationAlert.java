@@ -3,7 +3,7 @@ package edu.cpp.preston.saveme;
 //notifications from an alert
 public class NotificationAlert implements Notification {
 
-    private String personalMessage, sender, time, date;
+    private String personalMessage, sender, time, date, senderId;
     private double lat, lon;
     private int index;
 
@@ -64,4 +64,9 @@ public class NotificationAlert implements Notification {
     public void setIndex(int i){
         index = i;
     }
+
+    public String getSenderId(){
+        return null;
+    }
+
 }

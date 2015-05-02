@@ -10,14 +10,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseObject;
@@ -64,10 +62,10 @@ public class CustomizeAlert extends ActionBarActivity {
                 String[] shortMessages = new String[quickTexts.size()];
                 final int MAX_SHOWN_CHAR_LENGTH = 30;
 
-                for(int i = 0; i < quickTexts.size(); i++){
-                    if (quickTexts.get(i).length() > MAX_SHOWN_CHAR_LENGTH){
+                for (int i = 0; i < quickTexts.size(); i++) {
+                    if (quickTexts.get(i).length() > MAX_SHOWN_CHAR_LENGTH) {
                         shortMessages[i] = quickTexts.get(i).substring(0, MAX_SHOWN_CHAR_LENGTH) + "...";
-                    } else{
+                    } else {
                         shortMessages[i] = quickTexts.get(i);
                     }
                 }
@@ -97,19 +95,23 @@ public class CustomizeAlert extends ActionBarActivity {
                 }
 
                 if (isNumber || isConfirmed){ //must be confirmed to show on send alert to list
-                    contacts.add(new Contact(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"),isNumber, isConfirmed));
+                    Contact newContact = new Contact(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"),isNumber, isConfirmed);
+                    newContact.setContactId(sharedPrefContacts.getString("userObjectId" + i, ""));
+                    contacts.add(newContact);
                 }
             }
         }
 
-        final ListView listView = (ListView) findViewById(R.id.contactsListView);
-
+        ListView listView = (ListView) findViewById(R.id.contactsListView);
+        //listView.setChoiceMode(listView.CHOICE_MODE_MULTIPLE);
 
 
         contactListAdapter = new ContactAdapter(this, contacts, true);
         listView.setAdapter(contactListAdapter);
 
 
+
+        /*
         //HELPpPPPP VVVVVVVVVVVVVVVVVVVVVVVVV
 
         isChecked = new boolean[contacts.size()];
@@ -133,8 +135,7 @@ public class CustomizeAlert extends ActionBarActivity {
                 }
             }
         });
-
-
+*/
 
         Button sendButton = (Button) findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +175,7 @@ public class CustomizeAlert extends ActionBarActivity {
                 df = new SimpleDateFormat("MM/dd/yy");
                 String date = df.format(Calendar.getInstance().getTime());
 
-                if (isChecked[i]){
+                if (checkBox.isChecked()){
 
                     if (contacts.get(i).isNumber()){
                         SmsManager smsManager = SmsManager.getDefault();
@@ -183,7 +184,7 @@ public class CustomizeAlert extends ActionBarActivity {
                         ParseObject notification = new ParseObject("Notification"); //make new notification
                         notification.put("sender", username);
                         notification.put("type", "alert");
-                        notification.put("receiver", contacts.get(i).getID());
+                        notification.put("receiverId", contacts.get(i).getContactId());
                         notification.put("message", message);
                         notification.put("lat", lat);
                         notification.put("lon", lon);

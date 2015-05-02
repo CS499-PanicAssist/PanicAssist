@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -32,13 +33,27 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         ImageView imageView = (ImageView) view.findViewById(R.id.contactTypeIcon);
         TextView nameText = (TextView) view.findViewById(R.id.nameText);
         TextView contactIDText = (TextView) view.findViewById(R.id.contactIDText);
-        CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
+        final CheckBox checkbox = (CheckBox) view.findViewById(R.id.contactCheckBox);
 
         nameText.setText(contacts.get(position).getdisplayName());
         contactIDText.setText(contacts.get(position).getID());
 
+
+        /*
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkbox.isChecked()){
+                    checkbox.setChecked(false);
+                } else {
+                    checkbox.setChecked(false);
+                }
+            }
+        });
+        */
+
         if (!showCheckBox){
-            checkBox.setVisibility(View.GONE);
+            checkbox.setVisibility(View.GONE);
         }
 
         if (contacts.get(position).isNumber){ //contact is a phone number
@@ -58,4 +73,13 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 
         return view;
     }
+
+    /*
+    @Override
+    public void onListItemClick(ListView parent, View v,int position,long id){
+        CheckedTextView item = (CheckedTextView) v;
+        Toast.makeText(this, city[position] + " checked : " +
+                item.isChecked(), Toast.LENGTH_SHORT).show();
+    }
+    */
 }

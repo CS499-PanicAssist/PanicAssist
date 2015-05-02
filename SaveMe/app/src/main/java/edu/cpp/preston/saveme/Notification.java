@@ -10,4 +10,6 @@ public interface Notification {
 
     public String getMessage();
 
+    public String getSenderId();
+
 }

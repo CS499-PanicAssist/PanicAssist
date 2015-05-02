@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences sharedPrefContacts;
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
-    String username;
+    String username, userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
         sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
         sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
         username = sharedPrefSettings.getString("username", "*");
+        userId = sharedPrefSettings.getString("userObjectId", "*");
 
         notificationEditor = sharedPrefNotifications.edit();
         ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
@@ -78,65 +79,89 @@ public class MainActivity extends ActionBarActivity {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> queryNotificationList, ParseException e) {
                     if (e == null) {
-                        if (queryNotificationList.size() > 0) { //there is a new notification to download
-                            for (ParseObject notification : queryNotificationList){ //add each new notification to the local file system
-                                if (notification.getString("type").equalsIgnoreCase("info")){
-                                    for (int j = 0; j < 50; j++) { //add alert notification to local storage
-                                        if (!sharedPrefNotifications.contains("notification" + j)) {
-                                            notificationEditor.putString("notification" + j, "info");
-                                            notificationEditor.putString("title" + j, notification.getString("title"));
-                                            notificationEditor.putString("message" + j, notification.getString("message"));
-                                            break;
-                                        }
+                        for (ParseObject notification : queryNotificationList){ //add each new notification to the local file system
+                            if (notification.getString("type").equalsIgnoreCase("info")){
+                                for (int j = 0; j < 50; j++) { //add alert notification to local storage
+                                    if (!sharedPrefNotifications.contains("notification" + j)) {
+                                        notificationEditor.putString("notification" + j, "info");
+                                        notificationEditor.putString("title" + j, notification.getString("title"));
+                                        notificationEditor.putString("message" + j, notification.getString("message"));
+                                        break;
                                     }
-                                } else if (notification.getString("type").equalsIgnoreCase("request")){
-                                    for (int j = 0; j < 50; j++) { //add alert notification to local storage
-                                        if (!sharedPrefNotifications.contains("notification" + j)) {
-                                            notificationEditor.putString("notification" + j, "request");
-                                            notificationEditor.putString("sender" + j, notification.getString("sender"));
-                                            break;
-                                        }
-                                    }
-                                } else if (notification.getString("type").equalsIgnoreCase("requestReturn")){ //someone accepted a contact request
-                                    for (int j = 0; j < 50; j++){ //removes contact from preferences
-                                        if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(notification.getString("sender"))){
-                                            SharedPreferences.Editor editor = sharedPrefContacts.edit();
-                                            editor.putString("isConfirmed" + j, "true");
-                                            editor.commit();
-                                            break;
-                                        }
-                                    }
-                                } else if (notification.getString("type").equalsIgnoreCase("alert")){
-                                    for (int j = 0; j < 50; j++) { //add alert notification to local storage
-                                        if (!sharedPrefNotifications.contains("notification" + j)) {
-                                            notificationEditor.putString("notification" + j, "alert");
-                                            notificationEditor.putString("sender" + j, notification.getString("sender"));
-                                            notificationEditor.putString("personalMessage" + j, notification.getString("message"));
-                                            notificationEditor.putString("latitude" + j, notification.getString("lat"));
-                                            notificationEditor.putString("longitude" + j, notification.getString("lon"));
-                                            notificationEditor.putString("time" + j, notification.getString("time"));
-                                            notificationEditor.putString("date" + j, notification.getString("date"));
-                                            break;
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
                                 }
-
-                                notification.deleteInBackground(); //deletes notification from server
-                                notificationEditor.commit();
+                            } else if (notification.getString("type").equalsIgnoreCase("request")){
+                                for (int j = 0; j < 50; j++) { //add alert notification to local storage
+                                    if (!sharedPrefNotifications.contains("notification" + j)) {
+                                        notificationEditor.putString("notification" + j, "request");
+                                        notificationEditor.putString("sender" + j, notification.getString("sender"));
+                                        notificationEditor.putString("senderId" + j, notification.getString("senderId"));
+                                        break;
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
                             }
 
-                            reloadNotificationListView();
+                            notification.deleteInBackground(); //deletes notification from server
+                            notificationEditor.commit();
                         }
 
-                        //no new notifications to download
+                        reloadNotificationListView();
 
                     } else {
                         Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
                     }
+
+                    ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Notification");
+
+                    query2.whereEqualTo("receiverId", userId);
+                    query2.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(List<ParseObject> queryNotificationList, ParseException e) {
+                            if (e == null) {
+                                for (ParseObject notification : queryNotificationList) { //add each new notification to the local file system
+                                    if (notification.getString("type").equalsIgnoreCase("alert")) {
+                                        for (int j = 0; j < 50; j++) { //add alert notification to local storage
+                                            if (!sharedPrefNotifications.contains("notification" + j)) {
+                                                notificationEditor.putString("notification" + j, "alert");
+                                                notificationEditor.putString("sender" + j, notification.getString("sender"));
+                                                notificationEditor.putString("personalMessage" + j, notification.getString("message"));
+                                                notificationEditor.putString("latitude" + j, notification.getString("lat"));
+                                                notificationEditor.putString("longitude" + j, notification.getString("lon"));
+                                                notificationEditor.putString("time" + j, notification.getString("time"));
+                                                notificationEditor.putString("date" + j, notification.getString("date"));
+                                                break;
+                                            }
+                                        }
+                                    }  else if (notification.getString("type").equalsIgnoreCase("requestReturn")){ //someone accepted a contact request
+                                        for (int j = 0; j < 50; j++){ //edits contact to be confirmed
+                                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(notification.getString("sender"))){
+                                                SharedPreferences.Editor editor = sharedPrefContacts.edit();
+                                                editor.putString("userObjectId" + j, notification.getString("senderId"));
+                                                editor.putString("isConfirmed" + j, "true");
+                                                editor.commit();
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    notification.deleteInBackground(); //deletes notification from server
+                                    notificationEditor.commit();
+                                }
+
+                                reloadNotificationListView();
+
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             });
+
+
+
         }
 
         reloadNotificationListView();
@@ -165,7 +190,10 @@ public class MainActivity extends ActionBarActivity {
                 if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("info")){
                     notifications.add(new NotificationInfo(sharedPrefNotifications.getString("title" + i, "ERROR"), sharedPrefNotifications.getString("message" + i, "ERROR") ));
                 } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("request")){
-                    notifications.add(new NotificationRequest(sharedPrefNotifications.getString("sender" + i, "ERROR") ));
+                    NotificationRequest n = new NotificationRequest(sharedPrefNotifications.getString("sender" + i, "ERROR"));
+
+                    n.setSenderId(sharedPrefNotifications.getString("senderId" + i, "ERROR"));
+                    notifications.add(n); //CHAnged from sender to senderId
                 } else if (sharedPrefNotifications.getString("notification" + i, "ERROR").equalsIgnoreCase("alert")){
 
                     NotificationAlert toAdd = new NotificationAlert(sharedPrefNotifications.getString("sender" + i, "ERROR"), sharedPrefNotifications.getString("personalMessage" + i, "ERROR"),
@@ -394,7 +422,8 @@ public class MainActivity extends ActionBarActivity {
                     ParseObject notification2 = new ParseObject("Notification"); //make new notification
                     notification2.put("sender", username);
                     notification2.put("type", "requestReturn");
-                    notification2.put("receiver", notification.getSender());
+                    notification2.put("receiverId", notification.getSenderId());
+                    notification2.put("senderId", sharedPrefSettings.getString("userObjectId", "ERROR"));
                     notification2.saveEventually(); //save notification on server
 
                     deleteNotificationRequest(notification); //deletes notification from memory
@@ -472,7 +501,7 @@ public class MainActivity extends ActionBarActivity {
                         ParseObject notification = new ParseObject("Notification"); //make new notification
                         notification.put("sender", username);
                         notification.put("type", "alert");
-                        notification.put("receiver", sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"));
+                        notification.put("receiverId", sharedPrefContacts.getString("userObjectId" + j, "ERROR"));
                         notification.put("message", userMessage);
                         notification.put("lat", lat);
                         notification.put("lon", lon);

@@ -1,7 +1,7 @@
 package edu.cpp.preston.saveme;
 
 public class Contact {
-    String name, ID;
+    String name, ID, contactId;
     boolean isNumber, isConfirmed;
 
     public Contact(String displayName, String usernameOrNumber, boolean isNumber, boolean isConfirmed){
@@ -26,6 +26,14 @@ public class Contact {
 
     public boolean isNumber(){
         return isNumber;
+    }
+
+    public void setContactId(String id){
+        contactId = id;
+    }
+
+    public String getContactId(){
+        return contactId;
     }
 
     public void setIsConfirmed(boolean is){

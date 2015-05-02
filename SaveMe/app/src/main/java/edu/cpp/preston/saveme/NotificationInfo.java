@@ -30,4 +30,8 @@ public class NotificationInfo implements Notification {
     public String getMessage() {
         return message;
     }
+
+    public String getSenderId(){
+        return null;
+    }
 }

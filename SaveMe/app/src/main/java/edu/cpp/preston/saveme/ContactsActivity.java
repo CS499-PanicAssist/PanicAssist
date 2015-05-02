@@ -79,6 +79,7 @@ public class ContactsActivity extends ActionBarActivity {
                                 editor.remove("usernameOrNumber" + j);
                                 editor.remove("isNumber" + j);
                                 editor.remove("isConfirmed" + j);
+                                editor.remove("userObjectId" + j);
                                 editor.commit();
                                 break;
                             }
@@ -158,6 +159,7 @@ public class ContactsActivity extends ActionBarActivity {
                                 request.put("sender", sharedPrefSettings.getString("username", "ERROR"));
                                 request.put("type", "request");
                                 request.put("receiver", numberOrUserText.getText().toString());
+                                request.put("senderId", sharedPrefSettings.getString("userObjectId", "*"));
                                 request.saveEventually(); //save on server
                             }
 
