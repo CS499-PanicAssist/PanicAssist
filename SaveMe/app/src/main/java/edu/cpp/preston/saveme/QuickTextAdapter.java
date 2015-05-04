@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-
 //Adapter for quicktext list view
 public class QuickTextAdapter extends ArrayAdapter<String> {
 

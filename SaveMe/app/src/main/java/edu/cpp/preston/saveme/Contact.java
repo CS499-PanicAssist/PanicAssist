@@ -1,18 +1,19 @@
 package edu.cpp.preston.saveme;
 
 public class Contact {
-    String name, ID, contactId;
-    boolean isNumber, isConfirmed;
+    private String name, usernameOrNumber, contactId;
+    private boolean isNumber, isConfirmed, isSelected;
 
     public Contact(String displayName, String usernameOrNumber, boolean isNumber, boolean isConfirmed){
         this.name = displayName;
         this.isNumber = isNumber;
         this.isConfirmed = isConfirmed;
+        this.isSelected = true;
 
         if (isNumber){
-            ID = usernameOrNumber.replaceAll("[^0-9]","");
+            this.usernameOrNumber = usernameOrNumber.replaceAll("[^0-9]","");
         } else {
-            this.ID = usernameOrNumber;
+            this.usernameOrNumber = usernameOrNumber;
         }
     }
 
@@ -20,8 +21,8 @@ public class Contact {
         return name;
     }
 
-    public String getID(){
-        return ID;
+    public String getUsernameOrNumber(){
+        return usernameOrNumber;
     }
 
     public boolean isNumber(){
@@ -42,6 +43,14 @@ public class Contact {
 
     public boolean isConfirmed(){
         return isConfirmed;
+    }
+
+    public void setSelected(boolean is){
+        isSelected = is;
+    }
+
+    public boolean isSelected(){
+        return isSelected;
     }
 
 }

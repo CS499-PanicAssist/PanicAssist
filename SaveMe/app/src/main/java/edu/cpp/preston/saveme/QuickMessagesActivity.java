@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class QuickMessagesActivity extends ActionBarActivity {
@@ -51,7 +53,9 @@ public class QuickMessagesActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 EditText messageEditText = (EditText) findViewById(R.id.quickTextEditText);
-                if (messageEditText.getText().length() > 0){
+                if (messageEditText.getText().length() > 160){
+                    Toast.makeText(getApplicationContext(), "Must be less than 160 characters", Toast.LENGTH_SHORT).show();
+                } else if (messageEditText.getText().length() > 0){
                     quickTexts.add(messageEditText.getText().toString());
                     quickTextListAdapter.notifyDataSetChanged();
 

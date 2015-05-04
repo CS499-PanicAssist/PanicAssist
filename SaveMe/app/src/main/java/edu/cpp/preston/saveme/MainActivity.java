@@ -45,7 +45,6 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences sharedPrefContacts;
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
-    String username, userId;
     GPSTracker gps;
 
     @Override
@@ -58,8 +57,6 @@ public class MainActivity extends ActionBarActivity {
         sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
         sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
         sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
-        username = sharedPrefSettings.getString("username", "*");
-        userId = sharedPrefSettings.getString("userObjectId", "*");
 
         notificationEditor = sharedPrefNotifications.edit();
         ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
@@ -78,10 +75,10 @@ public class MainActivity extends ActionBarActivity {
             alertImage.setImageResource(R.drawable.savemelogo);
         }
 
-        if (username.length() > 4) {
+        if (App.username.length() > 4) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Notification");
 
-            query.whereEqualTo("receiver", username);
+            query.whereEqualTo("receiver", App.username);
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> queryNotificationList, ParseException e) {
                     if (e == null) {
@@ -120,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
 
                     ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Notification");
 
-                    query2.whereEqualTo("receiverId", userId);
+                    query2.whereEqualTo("receiverId", App.userId);
                     query2.findInBackground(new FindCallback<ParseObject>() {
                         public void done(List<ParseObject> queryNotificationList, ParseException e) {
                             if (e == null) {
@@ -335,7 +332,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private boolean alertAbleToSend() { // returns true if username is chosen and has at least one confirmed contact
-        if (username.length() > 4) { // username has been set up
+        if (App.username.length() > 4) { // username has been set up
             for (int i = 0; i < 50; i++) { //gets notifications from preferences file
                 if (sharedPrefContacts.contains("displayname" + i) && sharedPrefContacts.getString("isConfirmed" + i, "*").equalsIgnoreCase("true")) {
                     return true;
@@ -425,7 +422,7 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     ParseObject notification2 = new ParseObject("Notification"); //make new notification
-                    notification2.put("sender", username);
+                    notification2.put("sender", App.username);
                     notification2.put("type", "requestReturn");
                     notification2.put("receiverId", notification.getSenderId());
                     notification2.put("senderId", sharedPrefSettings.getString("userObjectId", "ERROR"));
@@ -489,26 +486,24 @@ public class MainActivity extends ActionBarActivity {
         if (gps.canGetLocation()){
             String lat = gps.getLatitude() + "";
             String lon = gps.getLongitude() + "";
-            String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
+            String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + App.username + ")";
             String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
-            String myLocaion = "My location is: " + geoUri;
+            String myLocation = "My location is: " + geoUri;
+            DateFormat df = new SimpleDateFormat("h:mm a");
+            String time = df.format(Calendar.getInstance().getTime());
+            df = new SimpleDateFormat("MM/dd/yy");
+            String date = df.format(Calendar.getInstance().getTime());
 
             for (int j = 0; j < 50; j++) { //removes request from preferences
                 if (sharedPrefContacts.contains("displayname" + j)) {
-
-                    DateFormat df = new SimpleDateFormat("h:mm a");
-                    String time = df.format(Calendar.getInstance().getTime());
-                    df = new SimpleDateFormat("MM/dd/yy");
-                    String date = df.format(Calendar.getInstance().getTime());
-
                     if (sharedPrefContacts.getString("isConfirmed" + j, "*").equalsIgnoreCase("true")) {
                         if (sharedPrefContacts.getString("isNumber" + j, "*").equalsIgnoreCase("true")) { //send text here
-                            SmsManager smsManager = SmsManager.getDefault();
+                            CompatibilitySmsManager smsManager = CompatibilitySmsManager.getDefault();
                             smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, userMessage, null, null);
-                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, myLocaion, null, null);
+                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, myLocation, null, null);
                         } else {
                             ParseObject notification = new ParseObject("Notification"); //make new notification
-                            notification.put("sender", username);
+                            notification.put("sender", App.username);
                             notification.put("type", "alert");
                             notification.put("receiverId", sharedPrefContacts.getString("userObjectId" + j, "ERROR"));
                             notification.put("message", userMessage);

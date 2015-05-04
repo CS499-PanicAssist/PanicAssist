@@ -5,18 +5,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,17 +28,17 @@ public class CustomizeAlert extends ActionBarActivity {
     private ArrayList<String> quickTexts;
     private ArrayList<Contact> contacts;
     private ContactAdapter contactListAdapter;
-    private LocationManager locationManager;
-    private boolean isChecked[];
+    private SharedPreferences sharedPrefContacts;
+    GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customize_alert);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        final SharedPreferences sharedPrefQuickText = getActivity().getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
-        final SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
+        gps = new GPSTracker(this);
+        final SharedPreferences sharedPrefQuickText = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+        sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -108,45 +103,15 @@ public class CustomizeAlert extends ActionBarActivity {
         }
 
         ListView listView = (ListView) findViewById(R.id.contactsListView);
-        //listView.setChoiceMode(listView.CHOICE_MODE_MULTIPLE);
-
-
         contactListAdapter = new ContactAdapter(this, contacts, true);
         listView.setAdapter(contactListAdapter);
-
-
-
-        /*
-        //HELPpPPPP VVVVVVVVVVVVVVVVVVVVVVVVV
-
-        isChecked = new boolean[contacts.size()];
-        for (int i = 0; i < isChecked.length; i++){
-            isChecked[i] = true;
-        }
-
-        //HELP111111111111111111111111111111 ^^^^^6
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
-
-                if (checkBox.isChecked()) {
-                    checkBox.setChecked(false);
-                    isChecked[i] = false;
-                } else {
-                    checkBox.setChecked(true);
-                    isChecked[i] = true;
-                }
-            }
-        });
-*/
 
         Button sendButton = (Button) findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendAlert(messageText.getText().toString());
+                sendCustomAlert(messageText.getText().toString());
+                NavUtils.navigateUpFromSameTask(getActivity());
             }
         });
     }
@@ -162,52 +127,44 @@ public class CustomizeAlert extends ActionBarActivity {
         return this;
     }
 
-    public void sendAlert(String userMessage){
+    public void sendCustomAlert(String userMessage){
 
-        Criteria criteria = new Criteria();
-        SharedPreferences sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
-        String username = sharedPrefSettings.getString("username", "*");
-        String provider = locationManager.getBestProvider(criteria, false);
-        Location location = locationManager.getLastKnownLocation(provider);
-        String lat = location.getLatitude() + "";
-        String lon = location.getLongitude() + "";
-        String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + username + ")";
-        String fullSMS = userMessage + " My location is: " + geoUri;
-        DateFormat df = new SimpleDateFormat("h:mm a");
-        String time = df.format(Calendar.getInstance().getTime());
-        df = new SimpleDateFormat("MM/dd/yy");
-        String date = df.format(Calendar.getInstance().getTime());
+        if (gps.canGetLocation()){
+            String lat = gps.getLatitude() + "";
+            String lon = gps.getLongitude() + "";
+            String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + App.username + ")";
+            String myLocation = "My location is: " + geoUri;
+            DateFormat df = new SimpleDateFormat("h:mm a");
+            String time = df.format(Calendar.getInstance().getTime());
+            df = new SimpleDateFormat("MM/dd/yy");
+            String date = df.format(Calendar.getInstance().getTime());
 
-        if (username.length() < 4){
-            Toast.makeText(getApplicationContext(), "Get a username first!", Toast.LENGTH_SHORT).show();
-        } else {
-            for (int i = 0; i < contactListAdapter.getCount(); i++){
-                View view = contactListAdapter.getView(i, null, null); //hardly right!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.contactCheckBox);
-
-                if (checkBox.isChecked()){
-
-                    if (contacts.get(i).isNumber()){
-                        SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage("+" + contacts.get(i).getID(), null , fullSMS, null, null);
-                    } else {
+            for (Contact contact : contactListAdapter.contacts){
+                if (contact.isSelected()) {
+                    if (contact.isNumber()) { //send text here
+                        CompatibilitySmsManager smsManager = CompatibilitySmsManager.getDefault();
+                        smsManager.sendTextMessage("+" + contact.getUsernameOrNumber(), null, userMessage, null, null);
+                        smsManager.sendTextMessage("+" + contact.getUsernameOrNumber(), null, myLocation, null, null);
+                    } else { //send save me alert here
                         ParseObject notification = new ParseObject("Notification"); //make new notification
-                        notification.put("sender", username);
+                        notification.put("sender", App.username);
                         notification.put("type", "alert");
-                        notification.put("receiverId", contacts.get(i).getContactId());
+                        notification.put("receiverId", contact.getContactId());
                         notification.put("message", userMessage);
                         notification.put("lat", lat);
                         notification.put("lon", lon);
                         notification.put("time", time);
                         notification.put("date", date);
                         notification.saveEventually(); //save notification on server
+
+                        //TODO send push notification to alert user of new alert
                     }
                 }
             }
 
-            Toast.makeText(getApplicationContext(), "Alerts sent!", Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(this, "Alerts sent!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Unable to get location!", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -64,7 +64,7 @@ public class ContactsActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(contacts.get(i).getdisplayName() + "\n" + contacts.get(i).getID());
+                builder.setMessage(contacts.get(i).getdisplayName() + "\n" + contacts.get(i).getUsernameOrNumber());
 
                 //okay
                 builder.setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
@@ -77,7 +77,7 @@ public class ContactsActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int id) {
 
                         for (int j = 0; j < 50; j++){ //removes contact from preferences
-                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(contacts.get(i).getID())){
+                            if (sharedPrefContacts.getString("usernameOrNumber" + j, "*").equalsIgnoreCase(contacts.get(i).getUsernameOrNumber())){
                                 SharedPreferences.Editor editor = sharedPrefContacts.edit();
                                 editor.remove("displayname" + j);
                                 editor.remove("usernameOrNumber" + j);
@@ -152,7 +152,7 @@ public class ContactsActivity extends ActionBarActivity {
                     if (!newContact.isNumber()){ //a user
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
 
-                        query.whereEqualTo("username", newContact.getID());
+                        query.whereEqualTo("username", newContact.getUsernameOrNumber());
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> queryNotificationList, ParseException e) {
                                 if (e == null) {
@@ -162,7 +162,7 @@ public class ContactsActivity extends ActionBarActivity {
                                         for (int i = 0; i < 50; i++) { //add contact to prefecences
                                             if (!sharedPrefContacts.contains("displayname" + i)) {
                                                 editor.putString("displayname" + i, newContact.getdisplayName());
-                                                editor.putString("usernameOrNumber" + i, newContact.getID());
+                                                editor.putString("usernameOrNumber" + i, newContact.getUsernameOrNumber());
                                                 editor.putString("isNumber" + i, "false");
                                                 editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
 
@@ -192,7 +192,7 @@ public class ContactsActivity extends ActionBarActivity {
                         for (int i = 0; i < 50; i++){ //add contact to prefecences
                             if (!sharedPrefContacts.contains("displayname" + i)){
                                 editor.putString("displayname" + i, newContact.getdisplayName());
-                                editor.putString("usernameOrNumber" + i, newContact.getID());
+                                editor.putString("usernameOrNumber" + i, newContact.getUsernameOrNumber());
                                 editor.putString("isNumber" + i, "true");
                                 editor.putString("isConfirmed" + i, "true");
                                 editor.commit();
