@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -36,8 +35,8 @@ public class MainActivity extends ActionBarActivity {
     private static ArrayList<Notification> notifications;
     private static NotificationAdapter notificationListAdapter;
     static SharedPreferences sharedPrefNotifications;
-    static SharedPreferences sharedPrefSettings;
     static SharedPreferences sharedPrefContacts;
+    static SharedPreferences sharedPrefSettings;
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
     GPSTracker gps;
@@ -154,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void reloadNotificationListView() {
-        notifications = new ArrayList<Notification>();
+        notifications = new ArrayList<>();
 
         if (!sharedPrefNotifications.contains("welcome")) { //if first launch then add welcome notification and default quick text
             notificationEditor.putString("welcome", getResources().getString(R.string.welcomeMessage));
@@ -211,11 +210,14 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        //makes jack menu icon correct on load
-        if (sendAlertOnUnplug()) {
-            MenuItem jackMenuItem = menu.findItem(R.id.headphones_menu_checkbox);
+        MenuItem jackMenuItem = menu.findItem(R.id.headphones_menu_checkbox);
+
+        if (sharedPrefSettings.getString("jack", "off").equalsIgnoreCase("on")){ //makes jack menu icon correct on load
             jackMenuItem.setChecked(true);
             jackMenuItem.setIcon(R.drawable.jackon);
+        } else {
+            jackMenuItem.setChecked(false);
+            jackMenuItem.setIcon(R.drawable.jack);
         }
 
         return true;
@@ -244,6 +246,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        SharedPreferences.Editor editor = sharedPrefSettings.edit();
 
         if (id == R.id.action_settings) { //settings was selected in menu dropdown
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -256,20 +259,23 @@ public class MainActivity extends ActionBarActivity {
                 sendAlertOnUnplug(false);
                 item.setChecked(false);
                 item.setIcon(R.drawable.jack);
+                editor.putString("jack", "off");
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: OFF", Toast.LENGTH_SHORT).show();
             } else { //turn on alert on unplug
                 sendAlertOnUnplug(true);
                 item.setChecked(true);
                 item.setIcon(R.drawable.jackon);
+                editor.putString("jack", "on");
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
             }
+            editor.commit();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     //User clicks on alert image
-    private void alertClick(View view) {
+    public void alertClick(View view) {
 
         if (!alertAbleToSend()) { //cannot send an alert
             Toast.makeText(getApplicationContext(), "Cannot send, please check settings!", Toast.LENGTH_SHORT).show();
@@ -409,7 +415,7 @@ public class MainActivity extends ActionBarActivity {
                     notification2.put("sender", App.username);
                     notification2.put("type", "requestReturn");
                     notification2.put("receiverId", notification.getSenderId());
-                    notification2.put("senderId", sharedPrefSettings.getString("userObjectId", "ERROR"));
+                    notification2.put("senderId", App.userId);
                     notification2.saveEventually(); //save notification on server
 
                     deleteNotificationRequest(notification); //deletes notification from memory
@@ -459,12 +465,6 @@ public class MainActivity extends ActionBarActivity {
         //and save it to file
     }
 
-    private boolean sendAlertOnUnplug() {
-        //TODO return true if should send alert on unplug
-
-        return true;
-    }
-
     public void sendDefaultAlert(Context context) {
 
         if (gps.canGetLocation()){
@@ -509,7 +509,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void phonebook(View view){
+    public void phonebook(View view){
         Intent intent = new Intent(getActivity(), PhoneNumbersActivity.class);
         startActivity(intent);
     }

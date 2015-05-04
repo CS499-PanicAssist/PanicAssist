@@ -76,4 +76,13 @@
     <string name="welcome">Welcome!</string>
     <string name="chooseAUsername">Please choose a username</string>
 
+    <string-array name="time_delay_array">
+        <item>10 Seconds</item>
+        <item>20 Seconds</item>
+        <item>30 Seconds</item>
+        <item>1 Minute</item>
+        <item>5 Minutes</item>
+        <item>10 Minutes</item>
+    </string-array>
+
 </resources>
