@@ -2,14 +2,14 @@ package edu.cpp.preston.saveme;
 
 public interface Notification {
 
-    public String getTitle();
+    String getTitle();
 
-    public String getDetailedTitle();
+    String getDetailedTitle();
 
-    public String getSender();
+    String getSender();
 
-    public String getMessage();
+    String getMessage();
 
-    public String getSenderId();
+    String getSenderId();
 
 }

@@ -74,7 +74,8 @@
             android:background="@android:color/black"
             android:scaleType="centerInside"
             android:layout_gravity="center"
-            android:src="@drawable/bluephone"/>
+            android:src="@drawable/bluephone"
+            android:onClick="phonebook"/>
 
     </LinearLayout>
 

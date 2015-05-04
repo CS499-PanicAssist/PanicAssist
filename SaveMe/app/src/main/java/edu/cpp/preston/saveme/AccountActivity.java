@@ -117,6 +117,8 @@ public class AccountActivity extends ActionBarActivity {
                         editor.putString("username", newUsername);
                         editor.commit();
                         progress.dismiss();
+                        App.username = newUsername;
+                        App.userId = user.getObjectId();
                         Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
                     } else { //edit existing  user
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
@@ -130,6 +132,8 @@ public class AccountActivity extends ActionBarActivity {
                                     editor.putString("userObjectId", queryEmailList.get(0).getObjectId()); //this users id is now saved, and is permanent
                                     editor.commit();
                                     progress.dismiss();
+                                    App.username = newUsername;
+                                    App.userId = queryEmailList.get(0).getObjectId();
                                     Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
                                 } else {
                                     progress.dismiss();

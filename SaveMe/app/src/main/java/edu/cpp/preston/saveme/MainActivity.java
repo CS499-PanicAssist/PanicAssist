@@ -6,15 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,15 +54,6 @@ public class MainActivity extends ActionBarActivity {
         sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
 
         notificationEditor = sharedPrefNotifications.edit();
-        ImageButton phoneImage = (ImageButton) findViewById(R.id.phonebutton);
-
-        //sets phone image button click listener
-        phoneImage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PhoneNumbersActivity.class);
-                startActivity(intent);
-            }
-        });
 
         //makes alert image correct on load
         if (alertAbleToSend()) {
@@ -162,8 +148,6 @@ public class MainActivity extends ActionBarActivity {
                     });
                 }
             });
-
-
         }
 
         reloadNotificationListView();
@@ -285,7 +269,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     //User clicks on alert image
-    public void alertClick(View view) {
+    private void alertClick(View view) {
 
         if (!alertAbleToSend()) { //cannot send an alert
             Toast.makeText(getApplicationContext(), "Cannot send, please check settings!", Toast.LENGTH_SHORT).show();
@@ -523,6 +507,11 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Toast.makeText(context, "Unable to get location!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void phonebook(View view){
+        Intent intent = new Intent(getActivity(), PhoneNumbersActivity.class);
+        startActivity(intent);
     }
 
     @Override

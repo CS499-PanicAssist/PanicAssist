@@ -81,24 +81,24 @@ public class CustomizeAlert extends ActionBarActivity {
             }
         });
 
-        contacts = new ArrayList<Contact>();
+        contacts = new ArrayList<>();
         for (int i = 0; i < 50; i++){ //gets preferences
             if (sharedPrefContacts.contains("displayname" + i)){
-                boolean isNumber = false, isConfirmed = false;
+                Contact newContact;
 
-                if (sharedPrefContacts.getString("isNumber" + i,"ERROR").equalsIgnoreCase("true")){
-                    isNumber = true;
-                }
+                if (sharedPrefContacts.getString("isNumber" + i,"ERROR").equalsIgnoreCase("true")){ //phone number
+                    newContact = new ContactPhone(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"));
+                } else { //username
+                    if (sharedPrefContacts.getString("isConfirmed" + i,"ERROR").equalsIgnoreCase("true")){
+                        newContact = new ContactSaveMe(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"), true);
+                    } else{
+                        newContact = new ContactSaveMe(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"), false);
+                    }
 
-                if (sharedPrefContacts.getString("isConfirmed" + i,"ERROR").equalsIgnoreCase("true")){
-                    isConfirmed = true;
-                }
-
-                if (isNumber || isConfirmed){ //must be confirmed to show on send alert to list
-                    Contact newContact = new Contact(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"),isNumber, isConfirmed);
                     newContact.setContactId(sharedPrefContacts.getString("userObjectId" + i, ""));
-                    contacts.add(newContact);
                 }
+
+                contacts.add(newContact);
             }
         }
 
@@ -141,7 +141,7 @@ public class CustomizeAlert extends ActionBarActivity {
 
             for (Contact contact : contactListAdapter.contacts){
                 if (contact.isSelected()) {
-                    if (contact.isNumber()) { //send text here
+                    if (contact.getClass() == ContactPhone.class) { //send text here
                         CompatibilitySmsManager smsManager = CompatibilitySmsManager.getDefault();
                         smsManager.sendTextMessage("+" + contact.getUsernameOrNumber(), null, userMessage, null, null);
                         smsManager.sendTextMessage("+" + contact.getUsernameOrNumber(), null, myLocation, null, null);
