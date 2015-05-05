@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
     GPSTracker gps;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

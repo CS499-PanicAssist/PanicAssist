@@ -1,4 +1,4 @@
 <menu
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="edu.cpp.preston.saveme.AccountActivity">
+    tools:context="edu.cpp.preston.PanicAssist.AccountActivity">
 </menu>

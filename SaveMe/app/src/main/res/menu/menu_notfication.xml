@@ -2,6 +2,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="edu.cpp.preston.saveme.NotificationAlertActivity">
+    tools:context="edu.cpp.preston.PanicAssist.NotificationAlertActivity">
 
 </menu>

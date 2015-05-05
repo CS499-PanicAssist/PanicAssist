@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="edu.cpp.preston.saveme.TutorialActivity">
+    tools:context="edu.cpp.preston.PanicAssist.TutorialActivity">
 
     <item android:id="@+id/action_help" android:title="@string/action_about"
         android:orderInCategory="100" app:showAsAction="never"/>

@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 //notifications from an alert
 public class NotificationAlert implements Notification {

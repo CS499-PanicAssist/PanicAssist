@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

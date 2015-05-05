@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 public class ContactPhone implements Contact {
     private String name, number, contactId;

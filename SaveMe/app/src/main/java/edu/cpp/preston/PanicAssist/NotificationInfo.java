@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 //notification from an admin, such as an information message
 public class NotificationInfo implements Notification {

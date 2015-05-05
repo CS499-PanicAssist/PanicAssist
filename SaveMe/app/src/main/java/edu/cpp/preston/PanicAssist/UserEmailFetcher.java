@@ -1,4 +1,4 @@
-package edu.cpp.preston.saveme;
+package edu.cpp.preston.PanicAssist;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

@@ -8,15 +8,119 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="edu.cpp.preston.saveme.HelpActivity">
+    tools:context="edu.cpp.preston.PanicAssist.HelpActivity"
+    android:background="@android:color/black">
 
-    <TextView android:text="@string/help_details" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
+    <TextView android:text="Setup" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textSize="20sp"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="To make sure your app is able to help in case of an emergency, make sure all setup steps are completed" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="  1. Pick a username (Required)\n  2. Add at least one contact (Required)\n  3. Add your own quick messages (Recommended)\n  4. Add emergency numbers (Recommended)" />
+
+    <TextView android:text="FAQ" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textSize="20sp"
+        android:textColor="#FFFFFF"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="Q: What happens when I send an alert? \nA: Unless you are customizing an alert before you send it, sending an alert sends your approximate location and your default quick message to all of your contacts.  If a contact is a phone number, it will be sent via text message (standard message rates apply)." />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="Q: What are the emergency numbers for? \nA: This is a good place to store numbers you might need in an emergency that you can quickly call after you've let your important persons know of your location and situation." />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="Q: What emergency numbers should I have? \nA: We suggest you look up and save these type of numbers, you only have to do it once and it could pay off some day. " />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="  -Local police \n  -Highway Patrol \n  -Fire department \n  -Animal control \n  -Poison control \n  -Your water company \n  -Your doctor \n  -Your boss \n  -Your pharmacy\n  -Your roadside assistance" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="Q: What is send alert on audio jack unplug? \nA: This option allows for the app to send an alert after headphones are unplugged. Useful for the lone ranger, who may like to bike, jog, or horseback ride alone." />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="Q: Can I send an alert if I'm not in danger? \nA: Sure! Just be courteous  to your contacts and make sure your message lets them know you\'re sending your location for another purpose." />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:id="@+id/tutorial"
-        android:text="Tutorial"/>
+        android:text="Tutorial"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"/>
 
 </LinearLayout>

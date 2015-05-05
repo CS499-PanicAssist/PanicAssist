@@ -1,4 +1,4 @@
 <menu
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="edu.cpp.preston.saveme.EmergencyNumbersActivity">
+    tools:context="edu.cpp.preston.PanicAssist.EmergencyNumbersActivity">
 </menu>
