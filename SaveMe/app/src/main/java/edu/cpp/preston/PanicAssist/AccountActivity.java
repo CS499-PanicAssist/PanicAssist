@@ -74,7 +74,10 @@ public class AccountActivity extends ActionBarActivity {
                                     if (e == null) {
                                         if (queryUsernamesList.size() > 0 && queryUsernamesList.get(0).getString("email").equalsIgnoreCase(userEmail)){
                                             editor.putString("username", enteredText);
+                                            editor.putString("userObjectId", queryUsernamesList.get(0).getObjectId());
                                             editor.commit();
+                                            App.userId = queryUsernamesList.get(0).getObjectId();
+                                            App.username = enteredText;
                                         } else if (queryUsernamesList.size() == 0) { //username is not taken so add it
                                             changeUserName(userEmail, enteredText);
                                         } else { //username taken
@@ -110,6 +113,7 @@ public class AccountActivity extends ActionBarActivity {
                             @Override
                             public void done(ParseException e) {
                                 editor.putString("userObjectId", user.getObjectId()); //this users id is now saved, and is permanent
+                                App.userId = user.getObjectId();
                                 editor.commit();
                             }
                         }); ;
@@ -118,7 +122,6 @@ public class AccountActivity extends ActionBarActivity {
                         editor.commit();
                         progress.dismiss();
                         App.username = newUsername;
-                        App.userId = user.getObjectId();
                         Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
                     } else { //edit existing  user
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("User");

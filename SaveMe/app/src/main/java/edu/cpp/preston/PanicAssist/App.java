@@ -19,6 +19,6 @@ public class App extends Application {
 
         SharedPreferences sharedSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         username = sharedSettings.getString("username", "*");
-        userId = sharedSettings.getString("userObjectId", "*");
+        userId = sharedSettings.getString("userObjectId", "Unknown");
     }
 }

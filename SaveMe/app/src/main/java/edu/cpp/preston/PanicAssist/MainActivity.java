@@ -41,7 +41,6 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences sharedPrefQuickTexts;
     GPSTracker gps;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
