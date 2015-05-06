@@ -1,5 +1,6 @@
 package edu.cpp.preston.PanicAssist;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,11 +8,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -64,13 +68,17 @@ public class ContactsActivity extends ActionBarActivity {
         final RadioButton userNameRadio = (RadioButton) findViewById(R.id.userNameRadioButton);
         final EditText nameText = (EditText) findViewById(R.id.contactNameText);
         final EditText numberOrUserText = (EditText) findViewById(R.id.contactNumberOrUserText);
-        ImageButton addContactImageButton = (ImageButton) findViewById(R.id.addContactImageButton);
+        final ImageButton addContactImageButton = (ImageButton) findViewById(R.id.addContactImageButton);
 
         phoneNumberRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 numberOrUserText.setHint("Phone Number");
                 numberOrUserText.setInputType(InputType.TYPE_CLASS_PHONE);
+
+                if (numberOrUserText.hasFocus()){
+                    //TODO change keyboard input type
+                }
             }
         });
 
@@ -79,6 +87,33 @@ public class ContactsActivity extends ActionBarActivity {
             public void onClick(View v) {
                 numberOrUserText.setHint("User Name");
                 numberOrUserText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                if (numberOrUserText.hasFocus()){
+                    //TODO change keyboard input type
+                }
+            }
+        });
+
+        nameText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    numberOrUserText.requestFocus();
+                    numberOrUserText.setSelection(numberOrUserText.getText().length());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        numberOrUserText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
+                    addContactImageButton.performClick();
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -90,17 +125,25 @@ public class ContactsActivity extends ActionBarActivity {
 
                 if(nameText.getText().length() == 0){
                     Toast.makeText(getApplicationContext(), "Enter a name", Toast.LENGTH_SHORT).show();
+                    nameText.requestFocus();
+                    nameText.setSelection(0);
                     return;
                 } else if(numberOrUserText.getText().length() == 0){
                     Toast.makeText(getApplicationContext(), "Enter a phone number or user name", Toast.LENGTH_SHORT).show();
+                    numberOrUserText.requestFocus();
+                    numberOrUserText.setSelection(0);
                     return;
                 } else if (phoneNumberRadio.isChecked() && numberOrUserText.getText().toString().replaceAll("[^0-9]", "").length() < 10){
                     Toast.makeText(getApplicationContext(), "Phone number must include area code", Toast.LENGTH_SHORT).show();
+                    numberOrUserText.requestFocus();
+                    numberOrUserText.setSelection(0);
                     return;
                 } else if (phoneNumberRadio.isChecked() && numberOrUserText.getText().toString().replaceAll("[^0-9]","").length() < 11){
                     numberOrUserText.setText("1" + numberOrUserText.getText());
                 } else if (!phoneNumberRadio.isChecked() && numberOrUserText.getText().toString().length() < 5){
                     Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_SHORT).show();
+                    nameText.requestFocus();
+                    nameText.setSelection(nameText.getText().length());
                     return;
                 }
 
@@ -116,7 +159,7 @@ public class ContactsActivity extends ActionBarActivity {
 
                     if (toAdd.getClass() == ContactSaveMe.class){ //a user
 
-                        final ProgressDialog progress = new ProgressDialog(getApplicationContext());
+                        final ProgressDialog progress = new ProgressDialog(getActivity());
                         progress.setTitle("Setting username");
                         progress.setMessage("Please wait...");
                         progress.show();
@@ -136,6 +179,7 @@ public class ContactsActivity extends ActionBarActivity {
                                                 editor.putString("usernameOrNumber" + i, toAdd.getUsernameOrNumber());
                                                 editor.putString("isNumber" + i, "false");
                                                 editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
+                                                editor.commit();
 
                                                 ParseObject request = new ParseObject("Notification"); //make new notification
                                                 request.put("sender", App.username);
@@ -144,12 +188,12 @@ public class ContactsActivity extends ActionBarActivity {
                                                 request.put("senderId", App.userId);
                                                 request.saveEventually(); //save on server
 
-                                                editor.commit();
-
                                                 contacts.add(toAdd);
                                                 contactListAdapter.notifyDataSetChanged();
                                                 nameText.setText("");
                                                 numberOrUserText.setText("");
+                                                nameText.requestFocus();
+                                                nameText.setSelection(0);
                                                 break;
                                             }
                                         }
@@ -173,6 +217,8 @@ public class ContactsActivity extends ActionBarActivity {
                                 contactListAdapter.notifyDataSetChanged();
                                 nameText.setText("");
                                 numberOrUserText.setText("");
+                                nameText.requestFocus();
+                                nameText.setSelection(0);
                                 break;
                             }
                         }
@@ -183,5 +229,9 @@ public class ContactsActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    private Activity getActivity(){
+        return this;
     }
 }

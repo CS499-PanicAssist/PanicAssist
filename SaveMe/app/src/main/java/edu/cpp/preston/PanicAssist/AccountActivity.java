@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -37,10 +41,20 @@ public class AccountActivity extends ActionBarActivity {
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
         final EditText nameEditText = (EditText) findViewById(R.id.nameEditText);
         nameEditText.setText(getUserName());
-        Button chooseNameButton = (Button) findViewById(R.id.chooseNameButton);
+        final Button chooseNameButton = (Button) findViewById(R.id.chooseNameButton);
+
+        nameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    chooseNameButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         chooseNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,9 +92,11 @@ public class AccountActivity extends ActionBarActivity {
                                             editor.commit();
                                             App.userId = queryUsernamesList.get(0).getObjectId();
                                             App.username = enteredText;
+                                            setNameSuccess();
                                         } else if (queryUsernamesList.size() == 0) { //username is not taken so add it
                                             changeUserName(userEmail, enteredText);
                                         } else { //username taken
+                                            progress.dismiss();
                                             Toast.makeText(getApplicationContext(), "Username taken, please try again.", Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
@@ -92,7 +108,7 @@ public class AccountActivity extends ActionBarActivity {
                         }
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
+                    setNameSuccess();
                 }
             }
         });
@@ -122,7 +138,7 @@ public class AccountActivity extends ActionBarActivity {
                         editor.commit();
                         progress.dismiss();
                         App.username = newUsername;
-                        Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
+                        setNameSuccess();
                     } else { //edit existing  user
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
 
@@ -137,7 +153,7 @@ public class AccountActivity extends ActionBarActivity {
                                     progress.dismiss();
                                     App.username = newUsername;
                                     App.userId = queryEmailList.get(0).getObjectId();
-                                    Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
+                                    setNameSuccess();
                                 } else {
                                     progress.dismiss();
                                     Toast.makeText(getApplicationContext(), "Error, please try again later", Toast.LENGTH_SHORT).show();
@@ -151,6 +167,11 @@ public class AccountActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+
+    private void setNameSuccess(){
+        Toast.makeText(getApplicationContext(), "Username set!", Toast.LENGTH_SHORT).show();
+        NavUtils.navigateUpFromSameTask(getActivity());
     }
 
     @Override

@@ -35,7 +35,8 @@
                 android:hint="@string/name"
                 android:id="@+id/phoneNumberNameText"
                 android:paddingEnd="10dp"
-                android:paddingRight="10dp"/>
+                android:paddingRight="10dp"
+                android:imeOptions="actionNext"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -44,7 +45,8 @@
                 android:id="@+id/phoneNumberText"
                 android:paddingRight="10dp"
                 android:paddingEnd="10dp"
-                android:inputType="phone"/>
+                android:inputType="phone"
+                android:imeOptions="actionDone"/>
 
             </LinearLayout>
 

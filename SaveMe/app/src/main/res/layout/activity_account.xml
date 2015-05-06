@@ -22,7 +22,8 @@
         android:hint="@string/yourUserName"
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
-        android:paddingBottom="20dp"/>
+        android:paddingBottom="20dp"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:layout_width="match_parent"
@@ -34,6 +35,7 @@
         android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/userNameNote"/>
+        android:text="@string/userNameNote"
+        />
 
 </LinearLayout>

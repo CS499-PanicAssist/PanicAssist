@@ -1,6 +1,5 @@
 package edu.cpp.preston.PanicAssist;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,11 +7,14 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                 builder.setIcon(android.R.drawable.ic_menu_call);
                 builder.setMessage(phoneNumbers.get(i).getName() + "\n" + phoneNumbers.get(i).getNumber());
 
@@ -82,13 +84,36 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
             }
         });
 
-        ImageButton addImageButton = (ImageButton) findViewById(R.id.addNumberImageButton);
+        final ImageButton addImageButton = (ImageButton) findViewById(R.id.addNumberImageButton);
+        final EditText nameText = (EditText) findViewById(R.id.phoneNumberNameText);
+        final EditText numberText = (EditText) findViewById(R.id.phoneNumberText);
+
+        nameText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    numberText.requestFocus();
+                    numberText.setSelection(numberText.getText().length());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        numberText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
+                    addImageButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText nameText = (EditText) findViewById(R.id.phoneNumberNameText);
-                EditText numberText = (EditText) findViewById(R.id.phoneNumberText);
-
                 if(nameText.getText().length() == 0){
                     Toast.makeText(getApplicationContext(), "Enter a name", Toast.LENGTH_SHORT).show();
                     return;
@@ -111,16 +136,12 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
                 phoneNumbers.add(new PhoneNumber(nameText.getText().toString(), numberText.getText().toString()));
                 phoneNumberListAdapter.notifyDataSetChanged();
 
-                nameText.setSelection(0);
                 nameText.setText("");
                 numberText.setText("");
+                nameText.requestFocus();
+                nameText.setSelection(0);
             }
         });
-
-    }
-
-    private Activity getActivity(){
-        return this;
     }
 
 }
