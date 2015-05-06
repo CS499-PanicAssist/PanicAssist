@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="_SaveMeTheme" parent="_SaveMeTheme">
+    <style name="_SaveMeTheme">
 
         <!-- Customize your theme here. -->
     </style>

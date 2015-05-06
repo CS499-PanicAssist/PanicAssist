@@ -1,5 +1,6 @@
 package edu.cpp.preston.PanicAssist;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
@@ -114,6 +115,12 @@ public class ContactsActivity extends ActionBarActivity {
                     final SharedPreferences.Editor editor = sharedPrefContacts.edit();
 
                     if (toAdd.getClass() == ContactSaveMe.class){ //a user
+
+                        final ProgressDialog progress = new ProgressDialog(getApplicationContext());
+                        progress.setTitle("Setting username");
+                        progress.setMessage("Please wait...");
+                        progress.show();
+
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
 
                         query.whereEqualTo("username", toAdd.getUsernameOrNumber());
@@ -150,6 +157,8 @@ public class ContactsActivity extends ActionBarActivity {
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
                                 }
+
+                                progress.dismiss();
                             }
                         });
                     } else { //a phone number
