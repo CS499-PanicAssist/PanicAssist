@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -125,6 +126,8 @@ public class AccountActivity extends ActionBarActivity {
                         final ParseObject user = new ParseObject("User"); //make new user
                         user.put("username", newUsername);
                         user.put("email", userEmail);
+                        user.put("pushId", ParseInstallation.getCurrentInstallation().getInstallationId());
+
                         user.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
@@ -132,7 +135,7 @@ public class AccountActivity extends ActionBarActivity {
                                 App.userId = user.getObjectId();
                                 editor.commit();
                             }
-                        }); ;
+                        });
 
                         editor.putString("username", newUsername);
                         editor.commit();

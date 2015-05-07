@@ -19,9 +19,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -497,7 +501,23 @@ public class MainActivity extends ActionBarActivity {
                             notification.put("date", date);
                             notification.saveEventually(); //save notification on server
 
-                            //TODO send push notification to alert user of new alert
+                            ParseQuery<ParseObject> query = ParseQuery.getQuery("User"); //For sending a push notification
+                            query.getInBackground(sharedPrefContacts.getString("userObjectId" + j, "ERROR"), new GetCallback<ParseObject>() {
+                                public void done(ParseObject user, ParseException e) {
+                                    if (e == null) {
+                                        String pushId = user.getString("pushId");
+
+                                        // WRONG WAY TO SEND PUSH - INSECURE!
+                                        ParseQuery pushQuery = ParseInstallation.getQuery();
+                                        pushQuery.whereEqualTo("installationId", pushId);
+
+                                        ParsePush push = new ParsePush();
+                                        push.setQuery(pushQuery); // Set our Installation query
+                                        push.setMessage(App.username + " has sent an alert!");
+                                        push.sendInBackground();
+                                    }
+                                }
+                            });
                         }
                     }
                 }

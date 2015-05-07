@@ -20,7 +20,9 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -160,7 +162,7 @@ public class ContactsActivity extends ActionBarActivity {
                     if (toAdd.getClass() == ContactSaveMe.class){ //a user
 
                         final ProgressDialog progress = new ProgressDialog(getActivity());
-                        progress.setTitle("Setting username");
+                        progress.setTitle("Adding user");
                         progress.setMessage("Please wait...");
                         progress.show();
 
@@ -168,9 +170,9 @@ public class ContactsActivity extends ActionBarActivity {
 
                         query.whereEqualTo("username", toAdd.getUsernameOrNumber());
                         query.findInBackground(new FindCallback<ParseObject>() {
-                            public void done(List<ParseObject> queryNotificationList, ParseException e) {
+                            public void done(List<ParseObject> queryUserList, ParseException e) {
                                 if (e == null) {
-                                    if (queryNotificationList.size() == 0){
+                                    if (queryUserList.size() == 0){
                                         Toast.makeText(getApplicationContext(), "No user with that username currently", Toast.LENGTH_SHORT).show();
                                     } else{
                                         for (int i = 0; i < 50; i++) { //add contact to prefecences
@@ -197,6 +199,15 @@ public class ContactsActivity extends ActionBarActivity {
                                                 break;
                                             }
                                         }
+
+                                        // WRONG WAY TO SEND PUSH - INSECURE!
+                                        ParseQuery pushQuery = ParseInstallation.getQuery();
+                                        pushQuery.whereEqualTo("installationId", queryUserList.get(0).getString("pushId"));
+
+                                        ParsePush push = new ParsePush();
+                                        push.setQuery(pushQuery); // Set our Installation query
+                                        push.setMessage("Contact request from " + App.username);
+                                        push.sendInBackground();
                                     }
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
