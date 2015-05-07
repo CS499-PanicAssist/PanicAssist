@@ -19,13 +19,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -167,7 +163,7 @@ public class MainActivity extends ActionBarActivity {
             editor.putString("quicktext0", "Please call me, if I don't respond I may be in an emergency.  My location is attached.");
             editor.putString("quicktext1", "Help, this is [your name here] I'm in danger!");
             editor.putString("quicktext2", "I'm just testing a new app, please disregard this message..");
-            editor.commit();
+            editor.apply();
         }
 
         if (!sharedPrefNotifications.getString("welcome", "*").equals("*")) {
@@ -272,7 +268,7 @@ public class MainActivity extends ActionBarActivity {
                 editor.putString("jack", "on");
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
             }
-            editor.commit();
+            editor.apply();
         }
 
         return super.onOptionsItemSelected(item);

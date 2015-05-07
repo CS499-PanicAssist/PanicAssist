@@ -26,9 +26,7 @@ import java.util.Calendar;
 public class CustomizeAlert extends ActionBarActivity {
 
     private ArrayList<String> quickTexts;
-    private ArrayList<Contact> contacts;
     private ContactAdapter contactListAdapter;
-    private SharedPreferences sharedPrefContacts;
     GPSTracker gps;
 
     @Override
@@ -37,8 +35,8 @@ public class CustomizeAlert extends ActionBarActivity {
         setContentView(R.layout.activity_customize_alert);
 
         gps = new GPSTracker(this);
-        final SharedPreferences sharedPrefQuickText = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
-        sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefQuickText = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
 
         ActionBar actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -81,7 +79,7 @@ public class CustomizeAlert extends ActionBarActivity {
             }
         });
 
-        contacts = new ArrayList<>();
+        ArrayList<Contact> contacts = new ArrayList<>();
         for (int i = 0; i < 50; i++){ //gets preferences
             if (sharedPrefContacts.contains("displayname" + i)){
 

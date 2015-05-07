@@ -1,8 +1,5 @@
 package edu.cpp.preston.PanicAssist;
 
-/**
- * Created by Preston on 5/2/2015.
- */
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;

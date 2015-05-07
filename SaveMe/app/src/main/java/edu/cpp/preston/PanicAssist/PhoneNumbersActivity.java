@@ -95,7 +95,7 @@ public class PhoneNumbersActivity extends ActionBarActivity {
                                 SharedPreferences.Editor editor = sharedPrefPhoneNumbers.edit();
                                 editor.remove("name" + j);
                                 editor.remove("number" + j);
-                                editor.commit();
+                                editor.apply();
                                 break;
                             }
                         }

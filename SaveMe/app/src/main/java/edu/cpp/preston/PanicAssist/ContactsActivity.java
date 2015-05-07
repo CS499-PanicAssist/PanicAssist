@@ -20,9 +20,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -181,7 +179,7 @@ public class ContactsActivity extends ActionBarActivity {
                                                 editor.putString("usernameOrNumber" + i, toAdd.getUsernameOrNumber());
                                                 editor.putString("isNumber" + i, "false");
                                                 editor.putString("isConfirmed" + i, "false"); //a contact is never confirmed when first added
-                                                editor.commit();
+                                                editor.apply();
 
                                                 ParseObject request = new ParseObject("Notification"); //make new notification
                                                 request.put("sender", App.username);
