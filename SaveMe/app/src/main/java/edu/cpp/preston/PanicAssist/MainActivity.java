@@ -501,23 +501,7 @@ public class MainActivity extends ActionBarActivity {
                             notification.put("date", date);
                             notification.saveEventually(); //save notification on server
 
-                            ParseQuery<ParseObject> query = ParseQuery.getQuery("User"); //For sending a push notification
-                            query.getInBackground(sharedPrefContacts.getString("userObjectId" + j, "ERROR"), new GetCallback<ParseObject>() {
-                                public void done(ParseObject user, ParseException e) {
-                                    if (e == null) {
-                                        String pushId = user.getString("pushId");
-
-                                        // WRONG WAY TO SEND PUSH - INSECURE!
-                                        ParseQuery pushQuery = ParseInstallation.getQuery();
-                                        pushQuery.whereEqualTo("installationId", pushId);
-
-                                        ParsePush push = new ParsePush();
-                                        push.setQuery(pushQuery); // Set our Installation query
-                                        push.setMessage(App.username + " has sent an alert!");
-                                        push.sendInBackground();
-                                    }
-                                }
-                            });
+                            new StaticMethods().sendNotification(sharedPrefContacts.getString("userObjectId" + j, "ERROR"), 0);
                         }
                     }
                 }

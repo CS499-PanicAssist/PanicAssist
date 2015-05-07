@@ -84,21 +84,17 @@ public class CustomizeAlert extends ActionBarActivity {
         contacts = new ArrayList<>();
         for (int i = 0; i < 50; i++){ //gets preferences
             if (sharedPrefContacts.contains("displayname" + i)){
-                Contact newContact;
 
                 if (sharedPrefContacts.getString("isNumber" + i,"ERROR").equalsIgnoreCase("true")){ //phone number
-                    newContact = new ContactPhone(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"));
+                    contacts.add(new ContactPhone(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR")));
                 } else { //username
                     if (sharedPrefContacts.getString("isConfirmed" + i,"ERROR").equalsIgnoreCase("true")){
+                        Contact newContact;
                         newContact = new ContactSaveMe(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"), true);
-                    } else{
-                        newContact = new ContactSaveMe(sharedPrefContacts.getString("displayname" + i,"ERROR"), sharedPrefContacts.getString("usernameOrNumber" + i,"ERROR"), false);
+                        newContact.setContactId(sharedPrefContacts.getString("userObjectId" + i, ""));
+                        contacts.add(newContact);
                     }
-
-                    newContact.setContactId(sharedPrefContacts.getString("userObjectId" + i, ""));
                 }
-
-                contacts.add(newContact);
             }
         }
 
@@ -157,7 +153,7 @@ public class CustomizeAlert extends ActionBarActivity {
                         notification.put("date", date);
                         notification.saveEventually(); //save notification on server
 
-                        //TODO send push notification to alert user of new alert
+                        new StaticMethods().sendNotification(contact.getContactId(), 0);
                     }
                 }
             }
@@ -167,4 +163,5 @@ public class CustomizeAlert extends ActionBarActivity {
             Toast.makeText(this, "Unable to get location!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

@@ -196,18 +196,11 @@ public class ContactsActivity extends ActionBarActivity {
                                                 numberOrUserText.setText("");
                                                 nameText.requestFocus();
                                                 nameText.setSelection(0);
+
                                                 break;
                                             }
                                         }
-
-                                        // WRONG WAY TO SEND PUSH - INSECURE!
-                                        ParseQuery pushQuery = ParseInstallation.getQuery();
-                                        pushQuery.whereEqualTo("installationId", queryUserList.get(0).getString("pushId"));
-
-                                        ParsePush push = new ParsePush();
-                                        push.setQuery(pushQuery); // Set our Installation query
-                                        push.setMessage("Contact request from " + App.username);
-                                        push.sendInBackground();
+                                        new StaticMethods().sendNotification(queryUserList.get(0).getObjectId(), 1);
                                     }
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
