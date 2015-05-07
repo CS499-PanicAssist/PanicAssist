@@ -1,5 +1,6 @@
 package edu.cpp.preston.PanicAssist;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,7 +51,7 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setIcon(android.R.drawable.ic_menu_call);
                 builder.setMessage(phoneNumbers.get(i).getName() + "\n" + phoneNumbers.get(i).getNumber());
 
@@ -142,6 +143,10 @@ public class EmergencyNumbersActivity extends ActionBarActivity {
                 nameText.setSelection(0);
             }
         });
+    }
+
+    private Activity getActivity(){
+        return this;
     }
 
 }

@@ -37,6 +37,16 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:text="Default"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+        android:layout_gravity="end"
+        />
+
     <ListView
         android:paddingTop="20dp"
         android:layout_width="match_parent"
