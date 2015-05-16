@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,10 +23,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -39,19 +36,19 @@ public class MainActivity extends ActionBarActivity {
     static SharedPreferences sharedPrefSettings;
     static SharedPreferences.Editor notificationEditor;
     static SharedPreferences sharedPrefQuickTexts;
-    GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gps = new GPSTracker(this);
         sharedPrefSettings = this.getSharedPreferences(getString(R.string.preference_file_general_settings_key), Context.MODE_PRIVATE);
         sharedPrefNotifications = this.getSharedPreferences(getString(R.string.preference_file_notifications_key), Context.MODE_PRIVATE);
         sharedPrefContacts = this.getSharedPreferences(getString(R.string.preference_file_contacts_key), Context.MODE_PRIVATE);
         sharedPrefQuickTexts = this.getSharedPreferences(getString(R.string.preference_file_quick_text_key), Context.MODE_PRIVATE);
 
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent("initialiseHeadsetService"));
+        getApplicationContext().startService(new Intent(getApplicationContext(), HeadsetMonitoringService.class));
         notificationEditor = sharedPrefNotifications.edit();
 
         //makes alert image correct on load
@@ -246,7 +243,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        SharedPreferences.Editor editor = sharedPrefSettings.edit();
 
         if (id == R.id.action_settings) { //settings was selected in menu dropdown
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -259,16 +255,13 @@ public class MainActivity extends ActionBarActivity {
                 sendAlertOnUnplug(false);
                 item.setChecked(false);
                 item.setIcon(R.drawable.jack);
-                editor.putString("jack", "off");
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: OFF", Toast.LENGTH_SHORT).show();
             } else { //turn on alert on unplug
                 sendAlertOnUnplug(true);
                 item.setChecked(true);
                 item.setIcon(R.drawable.jackon);
-                editor.putString("jack", "on");
                 Toast.makeText(getApplicationContext(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
             }
-            editor.apply();
         }
 
         return super.onOptionsItemSelected(item);
@@ -277,48 +270,7 @@ public class MainActivity extends ActionBarActivity {
     //User clicks on alert image
     public void alertClick(View view) {
 
-        if (!alertAbleToSend()) { //cannot send an alert
-            Toast.makeText(getApplicationContext(), "Cannot send, please check settings!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setPositiveButton(R.string.send_default, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                sendDefaultAlert(getApplicationContext());
-            }
-        });
-
-        builder.setNeutralButton(R.string.send_custom, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Intent intent = new Intent(getActivity(), CustomizeAlert.class);
-                startActivity(intent);
-            }
-        });
-
-        final AlertDialog dialog = builder.create();
-
-        dialog.setMessage("Send default alert now?"); // Do not remove this line of code
-
-        CountDownTimer timer = new CountDownTimer(20000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                dialog.setMessage("Send default alert now?\nSeconds until sent: " + millisUntilFinished / 1000);
-            }
-
-            @Override
-            public void onFinish() {
-                if (dialog.isShowing()) { // Dialog box is still open after allotted time, therefor send alert
-                    dialog.cancel();
-                    sendDefaultAlert(getApplicationContext());
-                }
-            }
-        };
-
-        dialog.show();
-        timer.start();
+        StaticMethods.showTimerDialog(getActivity(), 20);
     }
 
     private boolean alertAbleToSend() { // returns true if username is chosen and has at least one confirmed contact
@@ -460,53 +412,15 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void sendAlertOnUnplug(boolean turnFeatureOn) {
-        //TODO if true have app send alert if headphones unplug
-        //else turn off that feature
-        //and save it to file
-    }
+        SharedPreferences.Editor editor = sharedPrefSettings.edit();
 
-    public void sendDefaultAlert(Context context) {
-
-        if (gps.canGetLocation()){
-            String lat = gps.getLatitude() + "";
-            String lon = gps.getLongitude() + "";
-            String geoUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon + "(" + App.username + ")";
-            String userMessage = sharedPrefQuickTexts.getString("quicktext0", ""); //TODO get user-set default message
-            String myLocation = "My location is: " + geoUri;
-            DateFormat df = new SimpleDateFormat("h:mm a");
-            String time = df.format(Calendar.getInstance().getTime());
-            df = new SimpleDateFormat("MM/dd/yy");
-            String date = df.format(Calendar.getInstance().getTime());
-
-            for (int j = 0; j < 50; j++) { //removes request from preferences
-                if (sharedPrefContacts.contains("displayname" + j)) {
-                    if (sharedPrefContacts.getString("isConfirmed" + j, "*").equalsIgnoreCase("true")) {
-                        if (sharedPrefContacts.getString("isNumber" + j, "*").equalsIgnoreCase("true")) { //send text here
-                            CompatibilitySmsManager smsManager = CompatibilitySmsManager.getDefault();
-                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, userMessage, null, null);
-                            smsManager.sendTextMessage("+" + sharedPrefContacts.getString("usernameOrNumber" + j, "ERROR"), null, myLocation, null, null);
-                        } else {
-                            ParseObject notification = new ParseObject("Notification"); //make new notification
-                            notification.put("sender", App.username);
-                            notification.put("type", "alert");
-                            notification.put("receiverId", sharedPrefContacts.getString("userObjectId" + j, "ERROR"));
-                            notification.put("message", userMessage);
-                            notification.put("lat", lat);
-                            notification.put("lon", lon);
-                            notification.put("time", time);
-                            notification.put("date", date);
-                            notification.saveEventually(); //save notification on server
-
-                            new StaticMethods().sendNotification(sharedPrefContacts.getString("userObjectId" + j, "ERROR"), 0);
-                        }
-                    }
-                }
-            }
-
-            Toast.makeText(context, "Alerts sent!", Toast.LENGTH_SHORT).show();
+        if (turnFeatureOn){
+            editor.putString("jack", "on");
         } else {
-            Toast.makeText(context, "Unable to get location!", Toast.LENGTH_SHORT).show();
+            editor.putString("jack", "off");
         }
+
+        editor.apply();
     }
 
     public void phonebook(View view){
