@@ -29,8 +29,6 @@ public class HeadsetStateBroadcastReceiver extends BroadcastReceiver {
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
 
-                    //TODO Wake screen here or elsewhere
-
                     Intent i = new Intent(context, CountDownActivity.class);
                     i.putExtra("time", sharedPrefSettings.getInt("jackDelay", 30));
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -72,7 +72,6 @@ public class StaticMethods {
                 Intent intent = new Intent(activity, CustomizeAlert.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activity.startActivity(intent);
-                //TODO open activity like before ^ //should be good
             }
         });
 
