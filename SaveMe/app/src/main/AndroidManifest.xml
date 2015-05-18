@@ -49,6 +49,14 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="edu.cpp.preston.PanicAssist.CountDownActivity"
+            android:parentActivityName="edu.cpp.preston.PanicAssist.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Transparent"
+            android:noHistory="true"
+            android:showOnLockScreen="true">
+        </activity>
+        <activity
             android:name="edu.cpp.preston.PanicAssist.HelpActivity"
             android:label="@string/title_activity_help"
             android:parentActivityName="edu.cpp.preston.PanicAssist.MainActivity"

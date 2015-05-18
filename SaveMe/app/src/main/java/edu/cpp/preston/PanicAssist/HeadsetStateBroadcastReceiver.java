@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 public class HeadsetStateBroadcastReceiver extends BroadcastReceiver {
+
+    boolean wasConnected = false;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -18,20 +21,23 @@ public class HeadsetStateBroadcastReceiver extends BroadcastReceiver {
 
             SharedPreferences sharedPrefSettings = context.getSharedPreferences("edu.cpp.PanicAssist.PREFERENCE_GENERAL_KEY", Context.MODE_PRIVATE);
 
-            System.out.println("hello " + sharedPrefSettings.getString("jack", "*"));
-
             if (sharedPrefSettings.getString("jack", "off").equalsIgnoreCase("on")){ // only set if preference has alert on jack set to on
                 if (state > 0){
+                    wasConnected = true;
                     Toast.makeText(context, "Panic Assist on unplug enabled", Toast.LENGTH_LONG).show();
-                } else {
+                } else if (wasConnected){
+                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(1000);
 
-                    //wake scree and show dialog here
-                    //TODO
-                    //StaticMethods.showTimerDialog(context.acti, Integer.parseInt(sharedPrefSettings.getString("jackDelay", "30")));
+                    //TODO Wake screen here or elsewhere
+
+                    Intent i = new Intent(context, CountDownActivity.class);
+                    i.putExtra("time", sharedPrefSettings.getInt("jackDelay", 30));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
 
                 }
             }
-
         }
     }
 }

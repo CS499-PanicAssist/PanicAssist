@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity {
                                     }
                                 }
                             } else {
-                                Toast.makeText(getApplicationContext(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
                             }
 
                             notification.deleteInBackground(); //deletes notification from server
@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
                         reloadNotificationListView();
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Error contacting server", Toast.LENGTH_SHORT).show();
                     }
 
                     ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Notification");
@@ -128,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
                                             }
                                         }
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Error downloading notifications", Toast.LENGTH_SHORT).show();
                                     }
 
                                     notification.deleteInBackground(); //deletes notification from server
@@ -138,7 +138,7 @@ public class MainActivity extends ActionBarActivity {
                                 reloadNotificationListView();
 
                             } else {
-                                Toast.makeText(getApplicationContext(), "Error contacting server", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Error contacting server", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -255,12 +255,12 @@ public class MainActivity extends ActionBarActivity {
                 sendAlertOnUnplug(false);
                 item.setChecked(false);
                 item.setIcon(R.drawable.jack);
-                Toast.makeText(getApplicationContext(), "Alert on audio unplug: OFF", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Alert on audio unplug: OFF", Toast.LENGTH_SHORT).show();
             } else { //turn on alert on unplug
                 sendAlertOnUnplug(true);
                 item.setChecked(true);
                 item.setIcon(R.drawable.jackon);
-                Toast.makeText(getApplicationContext(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Alert on audio unplug: ON", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -269,7 +269,6 @@ public class MainActivity extends ActionBarActivity {
 
     //User clicks on alert image
     public void alertClick(View view) {
-
         StaticMethods.showTimerDialog(getActivity(), 20);
     }
 
@@ -407,7 +406,7 @@ public class MainActivity extends ActionBarActivity {
         notificationListAdapter.notifyDataSetChanged();
     }
 
-    private Activity getActivity() {
+    public Activity getActivity() {
         return this;
     }
 
